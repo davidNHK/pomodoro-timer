@@ -19,17 +19,16 @@
     "prettier": "2.6.2"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "yarn": "Use npm"
   },
   "license": "MIT",
   "name": "app",
   "private": true,
-  "repository": "git@github.com/davidNHK/project-bootstrap",
+  "repository": "git@github.com/davidNHK/pomodoro-timer.git",
   "scripts": {
     "prepare": "is-ci || husky install",
-    "prettier": "prettier",
-    "start:dev": "lerna run --parallel start:dev"
+    "prettier": "prettier"
   },
   "version": "0.0.1"
 }

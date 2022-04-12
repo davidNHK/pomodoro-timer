@@ -1,8 +1,19 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "compilerOptions": {
-    "types": ["cypress"]
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   },
-  "extends": "@busybox/tsconfig/tsconfig-react.json",
-  "include": ["src", "cypress/global.d.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "noEmit": false,
+    "outDir": "./dist/out-tsc",
+    "paths": {
+      "@app/*": ["src/*"]
+    }
+  },
+  "extends": "@busybox/tsconfig"
 }

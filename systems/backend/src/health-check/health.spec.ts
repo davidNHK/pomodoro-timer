@@ -16,17 +16,9 @@ describe('GET /healthz', () => {
       .get('/healthz')
       .expect(expectResponseCode({ expectedStatusCode: 200 }));
     expect(body).toStrictEqual({
-      details: {
-        database: {
-          status: 'up',
-        },
-      },
+      details: {},
       error: {},
-      info: {
-        database: {
-          status: 'up',
-        },
-      },
+      info: {},
       status: 'ok',
     });
   });
