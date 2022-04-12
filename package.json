@@ -1,0 +1,35 @@
+{
+  "author": "",
+  "dependencies": {
+    "lerna": "4.0.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "@busybox/eslint-config": "5.9.1",
+    "@busybox/prettier-config": "1.2.3",
+    "@commitlint/cli": "16.2.3",
+    "@commitlint/config-lerna-scopes": "16.2.2",
+    "commitlint": "16.2.3",
+    "eslint": "8.13.0",
+    "husky": "7.0.4",
+    "is-ci": "3.0.1",
+    "lint-staged": "12.3.7",
+    "markdownlint-cli2": "0.4.0",
+    "mrm": "4.0.0",
+    "prettier": "2.6.2"
+  },
+  "engines": {
+    "node": ">=14",
+    "yarn": "Use npm"
+  },
+  "license": "MIT",
+  "name": "app",
+  "private": true,
+  "repository": "git@github.com/davidNHK/project-bootstrap",
+  "scripts": {
+    "prepare": "is-ci || husky install",
+    "prettier": "prettier",
+    "start:dev": "lerna run --parallel start:dev"
+  },
+  "version": "0.0.1"
+}
