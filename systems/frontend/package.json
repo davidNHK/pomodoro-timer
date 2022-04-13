@@ -19,7 +19,7 @@
     "@angular-eslint/eslint-plugin-template": "13.1.0",
     "@angular-eslint/schematics": "13.1.0",
     "@angular-eslint/template-parser": "13.1.0",
-    "@angular/cli": "13.2.6",
+    "@angular/cli": "13.3.2",
     "@angular/compiler-cli": "13.2.0",
     "@busybox/eslint-config": "5.8.1",
     "@busybox/prettier-config": "1.2.1",
