@@ -21,7 +21,7 @@
     "@angular-eslint/template-parser": "13.1.0",
     "@angular/cli": "13.3.2",
     "@angular/compiler-cli": "13.2.0",
-    "@busybox/eslint-config": "5.8.1",
+    "@busybox/eslint-config": "5.10.0",
     "@busybox/prettier-config": "1.2.1",
     "@busybox/tsconfig": "1.7.0",
     "@types/jasmine": "3.10.0",
