@@ -64,7 +64,7 @@ export class AtlassianStrategy extends PassportStrategy(
     accessToken: string,
     refreshToken: string,
     profile: any,
-    cb: (err: any, user: any, info: any) => void,
+    cb: (err: any, user?: any, info?: any) => void,
   ): Promise<void> {
     return cb(null, profile, { accessToken, refreshToken });
   }

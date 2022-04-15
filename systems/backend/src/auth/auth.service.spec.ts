@@ -51,7 +51,7 @@ describe('AuthService', () => {
       await authService.exchangeTokenFromCode(code);
     expect(accessToken).toBeDefined();
     expect(refreshToken).toBeDefined();
-    await delay(500);
+    await delay(1000);
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await authService.refreshAccessToken(refreshToken);
     expect(accessToken).not.toEqual(newAccessToken);

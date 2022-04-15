@@ -4,49 +4,33 @@
     "analytics": "ae11f164-8091-4269-be24-a3022f0d10ea",
     "defaultCollection": "@angular-eslint/schematics"
   },
-  "version": 1,
+  "defaultProject": "frontend",
   "newProjectRoot": "projects",
   "projects": {
     "frontend": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/frontend",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": []
-          },
           "configurations": {
+            "development": {
+              "buildOptimizer": false,
+              "extractLicenses": false,
+              "namedChunks": true,
+              "optimization": false,
+              "sourceMap": true,
+              "vendorChunk": true
+            },
             "production": {
               "budgets": [
                 {
-                  "type": "initial",
+                  "maximumError": "1mb",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "type": "initial"
                 },
                 {
-                  "type": "anyComponentStyle",
+                  "maximumError": "4kb",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "type": "anyComponentStyle"
                 }
               ],
               "fileReplacements": [
@@ -56,29 +40,22 @@
                 }
               ],
               "outputHashing": "all"
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
             }
           },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "browserTarget": "frontend:build:production"
-            },
-            "development": {
-              "browserTarget": "frontend:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "production",
+          "options": {
+            "assets": ["src/favicon.ico", "src/assets"],
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "outputPath": "dist/frontend",
+            "polyfills": "src/polyfills.ts",
+            "scripts": [],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.css"
+            ],
+            "tsConfig": "tsconfig.app.json"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -89,31 +66,47 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "frontend:build:development"
+            },
+            "production": {
+              "browserTarget": "frontend:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "assets": ["src/favicon.ico", "src/assets"],
+            "karmaConfig": "karma.conf.js",
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "scripts": [],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "tsConfig": "tsconfig.spec.json"
           }
         }
-      }
+      },
+      "prefix": "app",
+      "projectType": "application",
+      "root": "",
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "sourceRoot": "src"
     }
   },
-  "defaultProject": "frontend"
+  "version": 1
 }

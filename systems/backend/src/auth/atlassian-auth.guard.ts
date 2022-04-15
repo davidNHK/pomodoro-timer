@@ -5,13 +5,13 @@ import { AuthGuard } from '@nestjs/passport';
 export class AtlassianAuthGuard extends AuthGuard('atlassian') {
   override async getAuthenticateOptions(context: ExecutionContext) {
     const req = this.getRequest(context);
-    const { currentUser } = req.query;
-    if (!currentUser) {
+    const { id: userId } = req.user || {};
+    if (!userId) {
       return {};
     }
     return {
       state: {
-        currentUserId: currentUser,
+        currentUserId: userId,
       },
     };
   }
@@ -30,8 +30,8 @@ export class AtlassianAuthGuard extends AuthGuard('atlassian') {
     return result as boolean;
   }
 
-  // @ts-expect-error no typing here
-  override async handleRequest(err, user, info, context, status) {
+  // @ts-expect-error No typing here
+  override handleRequest(err, user, info, context, status) {
     if (err || !user) {
       return super.handleRequest(err, user, info, context, status);
     }
