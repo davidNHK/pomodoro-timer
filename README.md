@@ -16,6 +16,8 @@ P.S. some of ADR document I circle back after finish coding, so it may out of or
 
 ## Development
 
+### Setup
+
 ```sh
 npm install
 npx lerna bootstrap
@@ -23,6 +25,13 @@ npx lerna exec --stream \
 --scope '{backend,frontend}' -- bash scripts/dev-setup.sh
 npx lerna exec --stream \
 --scope '{backend,frontend}' -- bash scripts/dev-server.sh
-
-Open http://localhost:3000 for dev
 ```
+
+### Start Dev Server
+
+```sh
+npx lerna exec --stream \
+--scope '{backend,frontend}' -- bash scripts/dev-server.sh
+```
+
+Open <http://localhost:4200> for dev
