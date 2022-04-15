@@ -21,7 +21,6 @@ export function setupApp(app: NestExpressApplication) {
   app.enableCors({ credentials: true, origin: [frontendOrigin] });
   app.useLogger(logger);
   app.use(helmet({}));
-
   app.enableShutdownHooks();
 
   logger.log({

@@ -10,6 +10,7 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TerminusModule } from '@nestjs/terminus';
 
+import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { RequestIdMiddleware } from './common/request-id.middleware';
 import { RequestStartTimeMiddleware } from './common/request-start-time.middleware';
@@ -23,6 +24,7 @@ import { HealthModule } from './health-check/health.module';
 import { GeneralLoggingInterceptor } from './logging/general-logging.interceptor';
 import { LoggingModule } from './logging/logging.module';
 import { TaskModule } from './task/task.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   controllers: [],
@@ -69,6 +71,8 @@ import { TaskModule } from './task/task.module';
     TaskModule,
     TerminusModule,
     HealthModule,
+    AuthModule,
+    UserModule,
   ],
   providers: [
     {
