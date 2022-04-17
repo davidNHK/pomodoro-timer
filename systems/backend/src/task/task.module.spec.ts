@@ -1,12 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
-import type { INestApplication } from '@nestjs/common';
-import type { TestingModule } from '@nestjs/testing';
 import gql from 'graphql-tag';
 
-import { AuthService } from '../auth/auth.service';
 import { getApolloServer } from '../test-helpers/get-apollo-server';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
-import { UserService } from '../user/user.service';
+import { signToken } from '../test-helpers/sign-token';
 
 const appContext = withNestServerContext({
   imports: [],
@@ -20,18 +17,6 @@ const GET_ALL_TASKS = gql`
     }
   }
 `;
-
-async function signToken(module: TestingModule | INestApplication) {
-  const authService = module.get<AuthService>(AuthService);
-  const userService = module.get<UserService>(UserService);
-  const userId = await userService.createUser({
-    email: 'test@gmail.com',
-    name: 'test',
-  });
-  const code = await authService.signTokenExchangeCode(userId);
-  const { accessToken } = await authService.exchangeTokenFromCode(code);
-  return { accessToken };
-}
 
 describe('Task Resolvers', () => {
   it('should get all tasks', async () => {
