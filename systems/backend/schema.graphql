@@ -5,6 +5,10 @@
 """Date custom scalar type"""
 scalar Date
 
+type Mutation {
+  createTask(data: TaskInput!): Task!
+}
+
 type Query {
   tasks: [Task!]!
 }
@@ -12,5 +16,11 @@ type Query {
 type Task {
   createdAt: Date!
   id: String!
+  notes: String
+  title: String!
+}
+
+input TaskInput {
+  notes: String
   title: String!
 }
