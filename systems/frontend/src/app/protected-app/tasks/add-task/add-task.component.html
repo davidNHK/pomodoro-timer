@@ -1,4 +1,8 @@
-<form [formGroup]="form" *ngIf="shouldShowInputForm" (ngSubmit)="submitForm()">
+<form
+  [formGroup]="form"
+  *ngIf="shouldShowInputForm && !submissionLoading"
+  (ngSubmit)="submitForm()"
+>
   <mat-card class="my-2">
     <mat-card-title>New Task</mat-card-title>
     <mat-card-content>
@@ -39,6 +43,13 @@
   </mat-card>
 </form>
 
+<section
+  *ngIf="submissionLoading"
+  class="flex items-center justify-center flex-col"
+>
+  <mat-spinner></mat-spinner>
+  <p>Creating task....</p>
+</section>
 <button
   mat-raised-button
   color="accent"

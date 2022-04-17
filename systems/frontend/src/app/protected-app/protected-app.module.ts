@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -23,6 +24,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     MatToolbarModule,
     TasksModule,
+    MatDividerModule,
   ],
   providers: [],
 })

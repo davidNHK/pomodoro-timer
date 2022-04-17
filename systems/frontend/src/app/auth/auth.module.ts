@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from '@app/app/auth/auth.component';
 import { LoginComponent } from '@app/app/auth/login/login.component';
 
+import { AuthService } from './auth.service';
 import { CallbackComponent } from './callback/callback.component';
 
 const routes: Routes = [
@@ -30,5 +31,6 @@ const routes: Routes = [
     MatIconModule,
     MatProgressSpinnerModule,
   ],
+  providers: [AuthService],
 })
 export class AuthModule {}

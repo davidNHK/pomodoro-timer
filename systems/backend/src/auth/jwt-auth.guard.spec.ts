@@ -83,7 +83,7 @@ describe('Test JwtAuthGuard', () => {
       expect(resp.errors[0].extensions.code).toStrictEqual('ERR_ACCESS_TOKEN');
     });
 
-    it('should show error code ? when given token expired', async () => {
+    it('should show error code ERR_ACCESS_TOKEN when given token expired', async () => {
       const { accessToken } = await signToken(context.app, {
         expiresIn: '1s',
       });

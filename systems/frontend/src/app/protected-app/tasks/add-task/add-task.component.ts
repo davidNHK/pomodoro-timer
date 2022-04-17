@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Apollo, gql } from 'apollo-angular';
+
+const CREATE_TASK = gql`
+  mutation createTask($data: TaskInput!) {
+    createTask(data: $data) {
+      id
+      title
+    }
+  }
+`;
 
 @Component({
   selector: 'app-add-task',
@@ -7,11 +18,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './add-task.component.html',
 })
 export class AddTaskComponent implements OnInit {
-  shouldShowInputForm = true;
+  shouldShowInputForm = false;
+
+  submissionLoading = false;
 
   form!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private apollo: Apollo,
+    private _snackBar: MatSnackBar,
+  ) {}
 
   toggleInputForm() {
     this.shouldShowInputForm = !this.shouldShowInputForm;
@@ -19,7 +36,30 @@ export class AddTaskComponent implements OnInit {
   }
 
   submitForm() {
-    console.log(this.form.value);
+    this.apollo
+      .mutate({
+        mutation: CREATE_TASK,
+        variables: { data: this.form.value },
+      })
+      .subscribe({
+        error: error => {
+          this._snackBar.open(error.message, '', { duration: 60000 });
+        },
+        next: ({ errors, loading }) => {
+          console.log('HeyHeyHey');
+          this.submissionLoading = loading;
+          if (!loading && !errors) {
+            this._snackBar.open('Task created', '', { duration: 5000 });
+            this.toggleInputForm();
+          }
+          if (errors)
+            this._snackBar.open(
+              'Something went wrong, please try again later',
+              '',
+              { duration: 2000 },
+            );
+        },
+      });
   }
 
   get notes() {
