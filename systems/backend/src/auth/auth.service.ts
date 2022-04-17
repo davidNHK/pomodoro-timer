@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 
 import { ErrorCode } from '../error-hanlding/error-code.constant';
 import { UserService } from '../user/user.service';
+import type { TokenUserPayload } from './token-user-payload';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,7 @@ export class AuthService {
       });
     }
     delete this.tokenCodes[code];
-    const payload = { userId };
+    const payload: TokenUserPayload = { userId };
     const refreshToken = this.jwtService.sign(payload);
     await this.userService.setUserRefreshToken(userId, refreshToken);
     return {
@@ -76,7 +77,7 @@ export class AuthService {
       });
     }
 
-    const payload = { userId };
+    const payload: TokenUserPayload = { userId };
     const newRefreshToken = this.jwtService.sign(payload);
     await this.userService.setUserRefreshToken(userId, newRefreshToken);
     return {
