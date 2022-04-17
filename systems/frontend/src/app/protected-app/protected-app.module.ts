@@ -1,15 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule, Routes } from '@angular/router';
 
-import { TimerComponent } from './timer/timer.component';
+import { HomeComponent } from './home/home.component';
+import { ProtectedAppComponent } from './protected-app.component';
+import { TasksModule } from './tasks/tasks.module';
 
-const routes: Routes = [{ component: TimerComponent, path: '' }];
+const routes: Routes = [
+  {
+    children: [{ component: HomeComponent, path: '' }],
+    component: ProtectedAppComponent,
+    path: '',
+  },
+];
 
 @NgModule({
-  declarations: [TimerComponent],
+  declarations: [ProtectedAppComponent, HomeComponent],
   exports: [RouterModule],
-  imports: [CommonModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    MatToolbarModule,
+    TasksModule,
+  ],
   providers: [],
 })
 export class ProtectedAppModule {}
