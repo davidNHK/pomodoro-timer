@@ -83,4 +83,8 @@ export class UserService {
   async getUserRefreshToken(userId: string) {
     return this.users[userId].refreshToken;
   }
+
+  async isUserIdExist(userId: string) {
+    return !!this.users[userId];
+  }
 }

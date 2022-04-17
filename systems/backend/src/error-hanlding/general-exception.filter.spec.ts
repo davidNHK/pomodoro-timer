@@ -103,6 +103,7 @@ describe('General exception filter', () => {
         {
           extensions: {
             code: 'ERR_UNHANDLED',
+            errors: [],
           },
           locations: [
             {

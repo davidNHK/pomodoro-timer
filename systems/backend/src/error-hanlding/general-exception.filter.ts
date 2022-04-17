@@ -18,6 +18,7 @@ import { err } from '../logging/formats/err';
 import { graphql } from '../logging/formats/graphql';
 import { http } from '../logging/formats/http';
 import { ErrorCode } from './error-code.constant';
+import type { ExceptionPayload } from './exception-payload';
 
 @Catch()
 export class GeneralExceptionFilter implements ExceptionFilter {
@@ -34,8 +35,8 @@ export class GeneralExceptionFilter implements ExceptionFilter {
 
   private catchGraphqlError(
     exception: Error & {
-      extensions?: Record<string, any>;
-      response?: { code: string };
+      extensions?: any;
+      response?: ExceptionPayload;
     },
     context: ArgumentsHost,
   ) {
@@ -49,6 +50,7 @@ export class GeneralExceptionFilter implements ExceptionFilter {
         : new ApolloError(
             exception.message ?? 'Internal server error',
             exception.response?.code ?? ErrorCode.UnhandledError,
+            { errors: exception.response?.errors ?? [] },
           )
     ) as ApolloError;
     const { req, res } = ctx.getContext<{ req: Request; res: Response }>();
