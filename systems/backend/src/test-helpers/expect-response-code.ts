@@ -18,14 +18,15 @@ export function expectResponseCode(params: {
     if (res.status !== expectedStatusCode) {
       throw new Error(
         `
-${message} ${res.status}
+${message}
 ${res.request.method} ${res.request.url}
-requestBody
+Response status: ${res.status}
+Request body
 ${
   // @ts-expect-error type error from supertest
   JSON.stringify(jsonParse(res.request._data), null, 4)
 }
-body
+Response body
 ${JSON.stringify(jsonParse(res.text), null, 4)}`,
       );
     }

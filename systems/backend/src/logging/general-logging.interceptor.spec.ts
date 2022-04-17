@@ -11,8 +11,8 @@ import { Controller, Get, LoggerService } from '@nestjs/common';
 import { Field, ID, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import gql from 'graphql-tag';
 
-import { createRequestAgent } from '../test-helpers/create-request-agent';
 import { expectResponseCode } from '../test-helpers/expect-response-code';
+import { getRequestAgent } from '../test-helpers/get-request-agent';
 import {
   startTestingServer,
   withNestModuleBuilderContext,
@@ -110,7 +110,7 @@ describe('General logging interceptor', () => {
     });
   });
   it('query rest endpoint', async () => {
-    await createRequestAgent(app.getHttpServer())
+    await getRequestAgent(app.getHttpServer())
       .get('/test-case/happy-endpoint')
       .expect(expectResponseCode({ expectedStatusCode: 200 }));
     expect(logger.log).toHaveBeenCalled();

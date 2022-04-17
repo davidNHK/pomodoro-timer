@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { createRequestAgent } from '../test-helpers/create-request-agent';
 import { expectResponseCode } from '../test-helpers/expect-response-code';
+import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
 
 const appContext = withNestServerContext({
@@ -10,7 +10,7 @@ const appContext = withNestServerContext({
 
 describe('Auth Module', () => {
   it('should throw error when given code not exist', async () => {
-    const resp = await createRequestAgent(appContext.app.getHttpServer())
+    const resp = await getRequestAgent(appContext.app.getHttpServer())
       .post('/auth/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,7 +26,7 @@ describe('Auth Module', () => {
   });
 
   it('should throw error when given refresh token is invalid', async () => {
-    const resp = await createRequestAgent(appContext.app.getHttpServer())
+    const resp = await getRequestAgent(appContext.app.getHttpServer())
       .post('/auth/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',

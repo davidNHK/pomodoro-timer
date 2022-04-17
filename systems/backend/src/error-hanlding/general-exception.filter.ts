@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GqlArgumentsHost } from '@nestjs/graphql';
-import { ApolloError, toApolloError } from 'apollo-server-errors';
+import { ApolloError } from 'apollo-server-errors';
 import type { Request, Response } from 'express';
 import { omit } from 'ramda';
 import { serializeError } from 'serialize-error';
@@ -35,20 +35,25 @@ export class GeneralExceptionFilter implements ExceptionFilter {
   private catchGraphqlError(
     exception: Error & {
       extensions?: Record<string, any>;
+      response?: { code: string };
     },
     context: ArgumentsHost,
   ) {
     const ctx = GqlArgumentsHost.create(context);
 
     const isApolloError = exception.extensions;
+
     const apolloError: ApolloError = (
       isApolloError
         ? exception
-        : toApolloError(exception, ErrorCode.UnhandledError)
+        : new ApolloError(
+            exception.message ?? 'Internal server error',
+            exception.response?.code ?? ErrorCode.UnhandledError,
+          )
     ) as ApolloError;
-    if (!isApolloError) apolloError.originalError = exception;
     const { req, res } = ctx.getContext<{ req: Request; res: Response }>();
     const end = new Date().getTime();
+
     const { startAt = end } = res?.locals ?? {};
     this.logger.error(
       {
@@ -60,7 +65,7 @@ export class GeneralExceptionFilter implements ExceptionFilter {
       },
       exception.stack,
     );
-    throw apolloError;
+    return apolloError;
   }
 
   private catchHttpError(exception: Error, context: ArgumentsHost) {

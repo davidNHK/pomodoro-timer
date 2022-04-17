@@ -8,6 +8,7 @@ import { AtlassianController } from './atlassian.controller';
 import { AtlassianStrategy } from './atlassian.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
 import { SessionStore } from './session.store';
 
 @Module({
@@ -25,6 +26,6 @@ import { SessionStore } from './session.store';
       }),
     }),
   ],
-  providers: [AtlassianStrategy, SessionStore, AuthService],
+  providers: [AtlassianStrategy, SessionStore, AuthService, JwtStrategy],
 })
 export class AuthModule {}
