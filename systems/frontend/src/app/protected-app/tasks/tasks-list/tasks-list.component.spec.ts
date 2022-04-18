@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatListModule } from '@angular/material/list';
 
 import { TasksListComponent } from './tasks-list.component';
 
@@ -8,9 +9,9 @@ describe('TasksListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TasksListComponent ]
-    })
-    .compileComponents();
+      declarations: [TasksListComponent],
+      imports: [MatListModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {

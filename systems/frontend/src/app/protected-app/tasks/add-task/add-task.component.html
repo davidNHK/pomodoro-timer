@@ -11,6 +11,7 @@
         <input
           matInput
           placeholder="What are you working on"
+          data-testid="task-title-input"
           formControlName="title"
         />
         <mat-error *ngIf="title?.invalid && (title?.dirty || title?.touched)"
@@ -48,12 +49,13 @@
   class="flex items-center justify-center flex-col"
 >
   <mat-spinner></mat-spinner>
-  <p>Creating task....</p>
+  <p data-testid="loading-description">Creating task....</p>
 </section>
 <button
   mat-raised-button
   color="accent"
   class="w-full"
+  data-testid="open-task-input-form"
   (click)="toggleInputForm()"
   [disabled]="shouldShowInputForm"
 >

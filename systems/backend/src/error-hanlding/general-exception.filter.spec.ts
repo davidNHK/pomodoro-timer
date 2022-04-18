@@ -1,16 +1,32 @@
 import { describe, expect, it } from '@jest/globals';
-import { getApolloServer } from '@nestjs/apollo';
 import { Controller, Get, ImATeapotException } from '@nestjs/common';
-import { Field, ID, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Field,
+  ID,
+  InputType,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
+import { randomUUID } from 'crypto';
 import gql from 'graphql-tag';
 
 import { expectResponseCode } from '../test-helpers/expect-response-code';
+import { getApolloServer } from '../test-helpers/get-apollo-server';
 import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
 
 @ObjectType()
 class TestModel {
+  @Field(() => ID)
+  id!: string;
+}
+
+@InputType()
+class TestInput {
   @Field(() => ID)
   id!: string;
 }
@@ -25,6 +41,11 @@ class TestResolver {
   @Query(() => TestModel)
   testQueryWithApolloError() {
     throw new ApolloError('Foobar', 'ERR_CREATE_RECORD');
+  }
+
+  @Mutation(() => TestModel)
+  testMutation(@Args('data') data: TestInput) {
+    return { data, id: randomUUID() };
   }
 }
 
@@ -85,7 +106,7 @@ describe('General exception filter', () => {
   });
 
   describe('graphql', () => {
-    it('query graphql endpoint that throw unknown error', async () => {
+    it('call graphql query endpoint that throw unknown error', async () => {
       const app = appContext.app;
       const server = getApolloServer(app);
       const UNDEFINED = gql`
@@ -116,7 +137,7 @@ describe('General exception filter', () => {
         },
       ]);
     });
-    it('query graphql endpoint that throw apollo error', async () => {
+    it('call graphql query endpoint that throw apollo error', async () => {
       const app = appContext.app;
       const server = getApolloServer(app);
       const UNDEFINED = gql`
@@ -145,6 +166,25 @@ describe('General exception filter', () => {
           path: ['testQueryWithApolloError'],
         },
       ]);
+    });
+    it('call graphql mutation endpoint and missing data', async () => {
+      const app = appContext.app;
+      const server = getApolloServer(app);
+      const TEST_MUTATION = gql`
+        mutation Test($data: TestInput!) {
+          testMutation(data: $data) {
+            id
+          }
+        }
+      `;
+      const resp = await server.executeOperation({
+        query: TEST_MUTATION,
+        variables: {
+          data: {},
+        },
+      });
+      expect(resp.errors).toBeDefined();
+      expect(resp.errors[0].extensions.code).toEqual('BAD_USER_INPUT');
     });
   });
 });

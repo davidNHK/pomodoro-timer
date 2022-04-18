@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AddTaskComponent } from './add-task/add-task.component';
+import { AllTasksGQL, CreateTaskGQL } from './graphql';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 
 @NgModule({
@@ -24,5 +25,6 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     MatProgressSpinnerModule,
     MatListModule,
   ],
+  providers: [AllTasksGQL, CreateTaskGQL],
 })
 export class TasksModule {}

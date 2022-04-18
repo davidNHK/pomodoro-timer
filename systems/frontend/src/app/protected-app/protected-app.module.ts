@@ -22,8 +22,8 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    MatToolbarModule,
     TasksModule,
+    MatToolbarModule,
     MatDividerModule,
   ],
   providers: [],

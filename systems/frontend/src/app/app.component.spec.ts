@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
+import { AuthComponent } from '@app/app/auth/auth.component';
 
 import { AppComponent } from './app.component';
 
@@ -21,9 +22,11 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('should have <router-outlet> for contain children routes', () => {
+    const fixture = TestBed.createComponent(AuthComponent);
+    fixture.detectChanges();
+    const authElement: HTMLElement = fixture.nativeElement;
+    const element = authElement.querySelector('router-outlet')!;
+    expect(element).toBeDefined();
   });
 });
