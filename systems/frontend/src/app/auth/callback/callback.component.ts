@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@app/app/auth/auth.service';
-import { mergeMap } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-auth-callback',
@@ -18,7 +18,10 @@ export class CallbackComponent implements OnInit {
   async ngOnInit() {
     this.route.queryParams
       .pipe(
-        mergeMap(({ code }) => this.authService.exchangeTokenFromCode(code)),
+        filter(({ code }) => !!code),
+        mergeMap(({ code }) => {
+          return this.authService.exchangeTokenFromCode(code);
+        }),
       )
       .subscribe(resp => {
         if (resp?.error) return this.router.navigate(['/auth/login']);

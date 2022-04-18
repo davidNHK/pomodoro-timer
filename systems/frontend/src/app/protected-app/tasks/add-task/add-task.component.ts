@@ -46,7 +46,6 @@ export class AddTaskComponent implements OnInit {
           this._snackBar.open(error.message, '', { duration: 60000 });
         },
         next: ({ errors, loading }) => {
-          console.log('HeyHeyHey');
           this.submissionLoading = loading;
           if (!loading && !errors) {
             this._snackBar.open('Task created', '', { duration: 5000 });
@@ -60,10 +59,6 @@ export class AddTaskComponent implements OnInit {
             );
         },
       });
-  }
-
-  get notes() {
-    return this.form.get('notes');
   }
 
   get title() {
