@@ -26,7 +26,7 @@
     "@busybox/eslint-config": "5.10.0",
     "@busybox/prettier-config": "1.2.1",
     "@busybox/tsconfig": "1.7.0",
-    "@types/jasmine": "3.10.0",
+    "@types/jasmine": "4.0.3",
     "@types/node": "12.11.1",
     "autoprefixer": "10.4.4",
     "eslint": "8.11.0",
