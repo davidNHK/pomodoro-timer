@@ -20,10 +20,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override handleRequest<T = TokenUserPayload>(err?: Error, user?: T) {
-    if (err || !user) {
+    if (err) {
+      throw err;
+    }
+    if (!user) {
       throw new UnauthorizedException({
         code: ErrorCode.AccessTokenError,
-        errors: [err?.message ?? 'Access Token error'],
+        errors: ['Access Token error'],
       });
     }
     return user;

@@ -8,6 +8,8 @@ import { expectResponseCode } from '../test-helpers/expect-response-code';
 import { getApolloServer } from '../test-helpers/get-apollo-server';
 import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
+import { signToken } from '../test-helpers/sign-token';
+import { delay } from '../test-helpers/utils';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ObjectType()
@@ -75,6 +77,23 @@ describe('Test JwtAuthGuard', () => {
 
     it('should show error code on extensions when given wrong token', async () => {
       const resp = await getApolloServer(context.app).executeOperation({
+        query: SIMPLE_TEST_QUERY,
+      });
+      expect(resp.errors).toBeDefined();
+      expect(resp.errors[0].extensions.code).toStrictEqual('ERR_ACCESS_TOKEN');
+    });
+
+    it('should show error code ERR_ACCESS_TOKEN when given token expired', async () => {
+      const { accessToken } = await signToken(context.app, {
+        expiresIn: '1s',
+      });
+      await delay(2000);
+      const resp = await getApolloServer(context.app).executeOperation({
+        http: {
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        },
         query: SIMPLE_TEST_QUERY,
       });
       expect(resp.errors).toBeDefined();

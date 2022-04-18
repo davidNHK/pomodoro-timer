@@ -12,7 +12,7 @@
     "noEmit": false,
     "outDir": "./dist/out-tsc",
     "paths": {
-      "@app/*": ["src/*"]
+      "@app-test-helper/*": ["src/test-helper/*"]
     }
   },
   "extends": "@busybox/tsconfig"

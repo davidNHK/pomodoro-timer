@@ -1,0 +1,63 @@
+<form
+  [formGroup]="form"
+  *ngIf="shouldShowInputForm && !submissionLoading"
+  (ngSubmit)="submitForm()"
+>
+  <mat-card class="my-2">
+    <mat-card-title>New Task</mat-card-title>
+    <mat-card-content>
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>Task Title</mat-label>
+        <input
+          matInput
+          placeholder="What are you working on"
+          data-testid="task-title-input"
+          formControlName="title"
+        />
+        <mat-error *ngIf="title?.invalid && (title?.dirty || title?.touched)"
+          >Title is required</mat-error
+        >
+        <mat-hint align="start"
+          ><strong>Suggest include JIRA ticket ID here</strong></mat-hint
+        >
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Notes</mat-label>
+        <textarea
+          matInput
+          placeholder="Notes"
+          formControlName="notes"
+        ></textarea>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-stroked-button
+        color="accent"
+        type="submit"
+        [disabled]="form.status === 'INVALID'"
+      >
+        Save
+      </button>
+      <button mat-stroked-button (click)="toggleInputForm()">Cancel</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
+
+<section
+  *ngIf="submissionLoading"
+  class="flex items-center justify-center flex-col"
+>
+  <mat-spinner></mat-spinner>
+  <p data-testid="loading-description">Creating task....</p>
+</section>
+<button
+  mat-raised-button
+  color="accent"
+  class="w-full"
+  data-testid="open-task-input-form"
+  (click)="toggleInputForm()"
+  [disabled]="shouldShowInputForm"
+>
+  Add task
+</button>

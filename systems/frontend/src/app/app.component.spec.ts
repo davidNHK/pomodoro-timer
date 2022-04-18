@@ -6,6 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { AuthComponent } from './auth/auth.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -21,9 +22,11 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('should have <router-outlet> for contain children routes', () => {
+    const fixture = TestBed.createComponent(AuthComponent);
+    fixture.detectChanges();
+    const authElement: HTMLElement = fixture.nativeElement;
+    const element = authElement.querySelector('router-outlet')!;
+    expect(element).toBeDefined();
   });
 });

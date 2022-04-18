@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, OmitType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Task {
@@ -6,8 +6,18 @@ export class Task {
   declare id: string;
 
   @Field({ nullable: false })
-  declare title: string;
+  title!: string;
 
   @Field({ nullable: false })
-  declare createdAt: Date;
+  createdAt!: Date;
+
+  @Field({ nullable: true })
+  notes?: string;
 }
+
+@InputType()
+export class TaskInput extends OmitType(
+  Task,
+  ['id', 'createdAt'] as const,
+  InputType,
+) {}

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
 import { ErrorCode } from '../error-hanlding/error-code.constant';
@@ -31,7 +31,7 @@ export class AuthService {
     return code;
   }
 
-  async exchangeTokenFromCode(code: string) {
+  async exchangeTokenFromCode(code: string, signTokenOptions?: JwtSignOptions) {
     const { expires, userId } = this.tokenCodes[code] ?? {};
     if (!userId || Date.now() > expires) {
       throw new UnauthorizedException({
@@ -44,7 +44,7 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(payload);
     await this.userService.setUserRefreshToken(userId, refreshToken);
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload, signTokenOptions),
       refreshToken,
     };
   }
