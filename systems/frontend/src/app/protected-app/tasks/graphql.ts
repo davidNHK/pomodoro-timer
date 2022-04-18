@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { gql, Mutation, Query } from 'apollo-angular';
+import { Apollo, gql, Mutation, Query } from 'apollo-angular';
+import type { MutationOptionsAlone } from 'apollo-angular/types';
 
-interface Task {
+export interface Task {
   id: string;
-  notes: string;
+  notes?: string;
   title: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 @Injectable({
@@ -35,4 +36,20 @@ export class CreateTaskGQL extends Mutation {
       }
     }
   `;
+
+  constructor(
+    private readonly allTasksGQL: AllTasksGQL,
+    override apollo: Apollo,
+  ) {
+    super(apollo);
+  }
+
+  override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
+    return super
+      .mutate(variables, {
+        ...options,
+        refetchQueries: [{ query: this.allTasksGQL.document }],
+      })
+      .pipe();
+  }
 }

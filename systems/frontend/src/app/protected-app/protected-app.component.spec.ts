@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { AuthComponent } from '@app/app/auth/auth.component';
 
+import { AuthComponent } from '../auth/auth.component';
 import { ProtectedAppComponent } from './protected-app.component';
 
 describe('ProtectedAppComponent', () => {

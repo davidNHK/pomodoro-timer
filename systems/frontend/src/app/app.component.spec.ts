@@ -4,9 +4,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
-import { AuthComponent } from '@app/app/auth/auth.component';
 
 import { AppComponent } from './app.component';
+import { AuthComponent } from './auth/auth.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {

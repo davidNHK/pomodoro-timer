@@ -1,5 +1,23 @@
-<mat-selection-list #shoes [multiple]="false">
-  <mat-list-option> A </mat-list-option>
-  <mat-list-option> B </mat-list-option>
-  <mat-list-option> C </mat-list-option>
+<h1
+  *ngIf="tasks.length === 0"
+  class="flex justify-center"
+  data-testid="empty-list-header"
+>
+  Oops! You are so free now
+</h1>
+<h1
+  *ngIf="selectedTask.length === 1"
+  class="flex justify-center"
+  data-testid="selected-task"
+>
+  #1 {{ selectedTask[0].title }}
+</h1>
+<mat-selection-list [multiple]="false" [(ngModel)]="selectedTask">
+  <mat-list-option
+    *ngFor="let task of tasks; let index = index"
+    [value]="task"
+    [attr.data-testid]="'task-list-item-' + index"
+  >
+    {{ task.title }}
+  </mat-list-option>
 </mat-selection-list>

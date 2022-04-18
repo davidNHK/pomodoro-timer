@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@app/app/auth/auth.service';
 import { filter, mergeMap } from 'rxjs/operators';
+
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-auth-callback',
