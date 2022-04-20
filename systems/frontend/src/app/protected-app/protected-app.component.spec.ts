@@ -1,6 +1,7 @@
 import { RouterModule } from '@angular/router';
 import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 
+import { AuthModule } from '../auth/auth.module';
 import { ProtectedAppComponent } from './protected-app.component';
 
 describe('ProtectedAppComponent', () => {
@@ -9,7 +10,7 @@ describe('ProtectedAppComponent', () => {
       ProtectedAppComponent,
       {
         declarations: [ProtectedAppComponent],
-        imports: [RouterModule.forRoot([])],
+        imports: [RouterModule.forRoot([]), AuthModule],
       },
     );
     const authElement: HTMLElement = fixture.nativeElement;
