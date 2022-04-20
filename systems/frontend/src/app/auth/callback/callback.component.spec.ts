@@ -1,14 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 import { Observable, of } from 'rxjs';
 
 import { AuthService } from '../auth.service';
 import { CallbackComponent } from './callback.component';
 
 describe('AuthCallbackComponent', () => {
-  let fixture: ComponentFixture<CallbackComponent>;
-
   async function setupTest({
     apiResponse,
     navigate,
@@ -18,9 +15,8 @@ describe('AuthCallbackComponent', () => {
     navigate: jasmine.Spy;
     queryParams: Observable<{ code?: string }>;
   }) {
-    await TestBed.configureTestingModule({
+    await configureTestingModuleForComponent(CallbackComponent, {
       declarations: [CallbackComponent],
-      imports: [MatProgressSpinnerModule],
       providers: [
         {
           provide: Router,
@@ -41,9 +37,7 @@ describe('AuthCallbackComponent', () => {
           },
         },
       ],
-    }).compileComponents();
-    fixture = TestBed.createComponent(CallbackComponent);
-    fixture.detectChanges();
+    });
   }
 
   it('should redirect to /app when given code can exchange token', async () => {

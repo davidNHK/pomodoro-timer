@@ -1,27 +1,27 @@
 import { HttpClientModule } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 
 import { AuthService } from '../auth.service';
 import { LogoutComponent } from './logout.component';
 
 describe('AuthLogoutComponent', () => {
   async function setupTest({ navigate }: { navigate: jasmine.Spy }) {
-    await TestBed.configureTestingModule({
-      declarations: [LogoutComponent],
-      imports: [MatButtonModule, HttpClientModule],
-      providers: [
-        {
-          provide: Router,
-          useValue: { navigate },
-        },
-        AuthService,
-      ],
-    }).compileComponents();
-    const fixture = TestBed.createComponent(LogoutComponent);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();
+    const { component, fixture } = await configureTestingModuleForComponent(
+      LogoutComponent,
+      {
+        declarations: [LogoutComponent],
+        imports: [MatButtonModule, HttpClientModule],
+        providers: [
+          {
+            provide: Router,
+            useValue: { navigate },
+          },
+          AuthService,
+        ],
+      },
+    );
     return { component, fixture };
   }
 

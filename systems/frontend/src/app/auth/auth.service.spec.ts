@@ -3,6 +3,8 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { configureTestingModule } from '@app-test-helper/configure-testing-module';
+import { lastValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -14,7 +16,7 @@ describe('AuthService', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
+    configureTestingModule({
       imports: [HttpClientTestingModule],
     });
     service = TestBed.inject(AuthService);
@@ -40,26 +42,26 @@ describe('AuthService', () => {
       );
       return req;
     }
-    it('should call endpoint and save token to storage when success response', () => {
-      service.exchangeTokenFromCode('123').subscribe(({ error }) => {
-        expect(error).toBeUndefined();
-        expect(service.accessToken).toEqual('accessToken');
-        expect(service.refreshToken).toEqual('refreshToken');
-      });
+    it('should call endpoint and save token to storage when success response', async () => {
+      const exchangeTokenFromCodeResp = lastValueFrom(
+        service.exchangeTokenFromCode('123'),
+      );
       const req = setupTest('123');
 
       req.flush({
         accessToken: 'accessToken',
         refreshToken: 'refreshToken',
       });
+      const { error } = await exchangeTokenFromCodeResp;
+      expect(error).toBeUndefined();
+      expect(service.accessToken).toEqual('accessToken');
+      expect(service.refreshToken).toEqual('refreshToken');
     });
 
-    it('should call endpoint and return error when error code is ERR_EXCHANGE_CODE', () => {
-      service.exchangeTokenFromCode('123').subscribe(({ error }) => {
-        expect(error.code).toEqual('ERR_EXCHANGE_CODE');
-        expect(service.accessToken).toBeNull();
-        expect(service.refreshToken).toBeNull();
-      });
+    it('should call endpoint and return error when error code is ERR_EXCHANGE_CODE', async () => {
+      const exchangeTokenFromCodeResp = lastValueFrom(
+        service.exchangeTokenFromCode('123'),
+      );
       const req = setupTest('123');
 
       req.flush(
@@ -68,14 +70,17 @@ describe('AuthService', () => {
         },
         { status: 401, statusText: 'Unauthorized' },
       );
+      const { error } = await exchangeTokenFromCodeResp;
+
+      expect(error.code).toEqual('ERR_EXCHANGE_CODE');
+      expect(service.accessToken).toBeNull();
+      expect(service.refreshToken).toBeNull();
     });
 
-    it('should call endpoint and throw error when status code is 500', () => {
-      service.exchangeTokenFromCode('123').subscribe({
-        error: err => {
-          expect(err).toBeDefined();
-        },
-      });
+    it('should call endpoint and throw error when status code is 500', async () => {
+      const exchangeTokenFromCodeResp = lastValueFrom(
+        service.exchangeTokenFromCode('123'),
+      );
       const req = setupTest('123');
       req.flush(
         {
@@ -83,6 +88,7 @@ describe('AuthService', () => {
         },
         { status: 500, statusText: 'Internal Server Error' },
       );
+      await expectAsync(exchangeTokenFromCodeResp).toBeRejected();
     });
   });
 
@@ -101,26 +107,28 @@ describe('AuthService', () => {
       );
       return req;
     }
-    it('should call endpoint and save token to storage when success response', () => {
-      service.refreshAccessToken('123').subscribe(({ error }) => {
-        expect(error).toBeUndefined();
-        expect(service.accessToken).toEqual('accessToken');
-        expect(service.refreshToken).toEqual('refreshToken');
-      });
+    it('should call endpoint and save token to storage when success response', async () => {
+      const refreshAccessTokenResp = lastValueFrom(
+        service.refreshAccessToken('123'),
+      );
+
       const req = setupTest('123');
 
       req.flush({
         accessToken: 'accessToken',
         refreshToken: 'refreshToken',
       });
+      const { error } = await refreshAccessTokenResp;
+      expect(error).toBeUndefined();
+      expect(service.accessToken).toEqual('accessToken');
+      expect(service.refreshToken).toEqual('refreshToken');
     });
 
-    it('should call endpoint and return error when error code is ERR_REFRESH_TOKEN', () => {
-      service.refreshAccessToken('123').subscribe(({ error }) => {
-        expect(error.code).toEqual('ERR_REFRESH_TOKEN');
-        expect(service.accessToken).toBeNull();
-        expect(service.refreshToken).toBeNull();
-      });
+    it('should call endpoint and return error when error code is ERR_REFRESH_TOKEN', async () => {
+      const refreshAccessTokenResp = lastValueFrom(
+        service.refreshAccessToken('123'),
+      );
+
       const req = setupTest('123');
 
       req.flush(
@@ -129,14 +137,16 @@ describe('AuthService', () => {
         },
         { status: 401, statusText: 'Unauthorized' },
       );
+      const { error } = await refreshAccessTokenResp;
+      expect(error.code).toEqual('ERR_REFRESH_TOKEN');
+      expect(service.accessToken).toBeNull();
+      expect(service.refreshToken).toBeNull();
     });
 
-    it('should call endpoint and throw error when status code is 500', () => {
-      service.refreshAccessToken('123').subscribe({
-        error: err => {
-          expect(err).toBeDefined();
-        },
-      });
+    it('should call endpoint and throw error when status code is 500', async () => {
+      const refreshAccessTokenResp = lastValueFrom(
+        service.refreshAccessToken('123'),
+      );
       const req = setupTest('123');
       req.flush(
         {
@@ -144,6 +154,7 @@ describe('AuthService', () => {
         },
         { status: 500, statusText: 'Internal Server Error' },
       );
+      await expectAsync(refreshAccessTokenResp).toBeRejected();
     });
   });
 });
