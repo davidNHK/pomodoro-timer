@@ -1,30 +1,15 @@
-import { HttpClientModule } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
+import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 
 import { AppComponent } from './app.component';
-import { AuthComponent } from './auth/auth.component';
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  it('should have <router-outlet> for contain children routes', async () => {
+    const { fixture } = await configureTestingModuleForComponent(AppComponent, {
       declarations: [AppComponent],
-      imports: [
-        RouterModule.forRoot([]),
-        HttpClientModule,
-        MatListModule,
-        MatIconModule,
-        MatProgressSpinnerModule,
-      ],
-    }).compileComponents();
-  });
+      imports: [RouterModule.forRoot([])],
+    });
 
-  it('should have <router-outlet> for contain children routes', () => {
-    const fixture = TestBed.createComponent(AuthComponent);
-    fixture.detectChanges();
     const authElement: HTMLElement = fixture.nativeElement;
     const element = authElement.querySelector('router-outlet')!;
     expect(element).toBeDefined();

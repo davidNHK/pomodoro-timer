@@ -1,10 +1,4 @@
-import { TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 import { from, Observable } from 'rxjs';
 
 import { CreateTaskGQL } from '../graphql';
@@ -22,21 +16,13 @@ describe('AddTaskComponent', () => {
       }>;
     };
   }) {
-    await TestBed.configureTestingModule({
-      declarations: [AddTaskComponent],
-      imports: [
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatCardModule,
-        MatSnackBarModule,
-        MatProgressSpinnerModule,
-      ],
-      providers: [{ provide: CreateTaskGQL, useValue: apiResponse }],
-    }).compileComponents();
-    const fixture = TestBed.createComponent(AddTaskComponent);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();
+    const { component, fixture } = await configureTestingModuleForComponent(
+      AddTaskComponent,
+      {
+        declarations: [AddTaskComponent],
+        providers: [{ provide: CreateTaskGQL, useValue: apiResponse }],
+      },
+    );
     return { component, fixture };
   }
 
