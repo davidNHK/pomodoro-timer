@@ -31,8 +31,9 @@ export class AuthService {
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          if (error?.error?.code === 'ERR_EXCHANGE_CODE')
-            return of(error as any);
+          this.#removeTokens();
+          const body = error.error;
+          if (body?.error?.code === 'ERR_EXCHANGE_CODE') return of(body as any);
           throw error;
         }),
         map(resp => {
@@ -60,8 +61,9 @@ export class AuthService {
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          if (error?.error?.code === 'ERR_REFRESH_TOKEN')
-            return of(error as any);
+          this.#removeTokens();
+          const body = error.error;
+          if (body?.error?.code === 'ERR_REFRESH_TOKEN') return of(body as any);
           throw error;
         }),
         map(resp => {
@@ -73,13 +75,17 @@ export class AuthService {
       );
   }
 
+  #removeTokens() {
+    this.accessToken = null;
+    this.refreshToken = null;
+  }
+
   hasAccessToken() {
     return !!this.accessToken;
   }
 
   logout() {
-    this.accessToken = null;
-    this.refreshToken = null;
+    this.#removeTokens();
   }
 
   get accessToken() {
@@ -96,7 +102,8 @@ export class AuthService {
   }
 
   set refreshToken(token: string | null) {
-    if (!token) localStorage.removeItem('refreshToken');
-    else localStorage.setItem('refreshToken', token);
+    if (!token) {
+      localStorage.removeItem('refreshToken');
+    } else localStorage.setItem('refreshToken', token);
   }
 }
