@@ -66,13 +66,13 @@ describe('AuthService', () => {
 
       req.flush(
         {
-          error: { code: 'ERR_EXCHANGE_CODE' },
+          errors: [{ code: 'ERR_EXCHANGE_CODE' }],
         },
         { status: 401, statusText: 'Unauthorized' },
       );
-      const { error } = await exchangeTokenFromCodeResp;
+      const { errors } = await exchangeTokenFromCodeResp;
 
-      expect(error.code).toEqual('ERR_EXCHANGE_CODE');
+      expect(errors[0].code).toEqual('ERR_EXCHANGE_CODE');
       expect(service.accessToken).toBeNull();
       expect(service.refreshToken).toBeNull();
     });
@@ -84,7 +84,7 @@ describe('AuthService', () => {
       const req = setupTest('123');
       req.flush(
         {
-          error: { code: 'ERR_UNHANDLED' },
+          errors: [{ code: 'ERR_UNHANDLED' }],
         },
         { status: 500, statusText: 'Internal Server Error' },
       );
@@ -133,12 +133,12 @@ describe('AuthService', () => {
 
       req.flush(
         {
-          error: { code: 'ERR_REFRESH_TOKEN' },
+          errors: [{ code: 'ERR_REFRESH_TOKEN' }],
         },
         { status: 401, statusText: 'Unauthorized' },
       );
-      const { error } = await refreshAccessTokenResp;
-      expect(error.code).toEqual('ERR_REFRESH_TOKEN');
+      const { errors } = await refreshAccessTokenResp;
+      expect(errors[0].code).toEqual('ERR_REFRESH_TOKEN');
       expect(service.accessToken).toBeNull();
       expect(service.refreshToken).toBeNull();
     });
@@ -150,7 +150,7 @@ describe('AuthService', () => {
       const req = setupTest('123');
       req.flush(
         {
-          error: { code: 'ERR_UNHANDLED' },
+          errors: [{ code: 'ERR_UNHANDLED' }],
         },
         { status: 500, statusText: 'Internal Server Error' },
       );

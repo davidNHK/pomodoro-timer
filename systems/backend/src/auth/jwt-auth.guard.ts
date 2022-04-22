@@ -26,7 +26,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!user) {
       throw new UnauthorizedException({
         code: ErrorCode.AccessTokenError,
-        errors: ['Access Token error'],
+        errors: [{ title: 'Access Token error' }],
       });
     }
     return user;

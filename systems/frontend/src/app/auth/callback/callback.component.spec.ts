@@ -55,7 +55,7 @@ describe('AuthCallbackComponent', () => {
     const routerNavigate = jasmine.createSpy();
 
     await setupTest({
-      apiResponse: of({ error: { code: '/auth/login' } }),
+      apiResponse: of({ errors: [{ code: 'ERR_SOMEWARE' }] }),
       navigate: routerNavigate,
       queryParams: of({ code: '123' }),
     });

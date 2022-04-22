@@ -25,7 +25,7 @@ export class CallbackComponent implements OnInit {
         }),
       )
       .subscribe(resp => {
-        if (resp?.error) return this.router.navigate(['/auth/login']);
+        if (resp?.errors) return this.router.navigate(['/auth/login']);
         return this.router.navigate(['/app']);
       });
   }

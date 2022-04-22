@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
 import { ErrorCode } from '../error-hanlding/error-code.constant';
+import { UnauthorizedException } from '../error-hanlding/unauthorized.exception';
 import { UserService } from '../user/user.service';
 import type { TokenUserPayload } from './token-user-payload';
 
@@ -36,6 +37,7 @@ export class AuthService {
     if (!userId || Date.now() > expires) {
       throw new UnauthorizedException({
         code: ErrorCode.ExchangeCodeError,
+        errors: [{ title: 'Exchange token from code error' }],
         meta: { code, expires, userId },
       });
     }
@@ -59,6 +61,7 @@ export class AuthService {
     } catch (e) {
       throw new UnauthorizedException({
         code: ErrorCode.RefreshTokenError,
+        errors: [{ title: 'Refresh access token error' }],
         meta: { refreshToken },
       });
     }
@@ -70,6 +73,7 @@ export class AuthService {
     if (!currentRefreshToken || currentRefreshToken !== refreshToken) {
       throw new UnauthorizedException({
         code: ErrorCode.RefreshTokenError,
+        errors: [{ title: 'Refresh access token error' }],
         meta: {
           equalToCurrentToken: currentRefreshToken === refreshToken,
           refreshToken,
