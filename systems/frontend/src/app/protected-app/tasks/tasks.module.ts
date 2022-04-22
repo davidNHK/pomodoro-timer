@@ -10,12 +10,20 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { AddTaskComponent } from './add-task/add-task.component';
+import { CountdownComponent } from './countdown/countdown.component';
+import { FormatMsPipe } from './format-ms.pipe';
 import { AllTasksGQL, CreateTaskGQL } from './graphql';
 import { TaskTimerComponent } from './task-timer/task-timer.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 
 @NgModule({
-  declarations: [TasksListComponent, AddTaskComponent, TaskTimerComponent],
+  declarations: [
+    TasksListComponent,
+    AddTaskComponent,
+    TaskTimerComponent,
+    CountdownComponent,
+    FormatMsPipe,
+  ],
   exports: [TasksListComponent, AddTaskComponent, TaskTimerComponent],
   imports: [
     CommonModule,

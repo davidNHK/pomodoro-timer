@@ -57,7 +57,7 @@
   class="w-full"
   data-testid="open-task-input-form"
   (click)="toggleInputForm()"
-  [disabled]="shouldShowInputForm"
+  [disabled]="shouldShowInputForm || isTimerRunning"
 >
   Add task
 </button>

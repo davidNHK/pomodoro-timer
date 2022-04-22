@@ -1,0 +1,30 @@
+<section class="flex w-full justify-center">
+  <main class="flex flex-col w-96 justify-center">
+    <article class="flex flex-col w-full text-center">
+      <h1>{{ type | uppercase }}</h1>
+      <p class="text-9xl">{{ runDown | formatMs }}</p>
+    </article>
+
+    <section class="flex flex-row w-full justify-center">
+      <button
+        *ngIf="!isTimerRunning"
+        mat-raised-button
+        color="primary"
+        class="w-full"
+        [disabled]="!canStartTimer"
+        (click)="start()"
+      >
+        {{ canStartTimer ? 'Start' : 'Select task first' }}
+      </button>
+      <button
+        *ngIf="isTimerRunning"
+        mat-raised-button
+        color="primary"
+        class="w-full"
+        (click)="stop()"
+      >
+        Stop
+      </button>
+    </section>
+  </main>
+</section>

@@ -76,7 +76,7 @@ describe('TasksListComponent', () => {
         ],
       },
     );
-    component.selectedTask = [{ id: '1', title: 'Test 1' }];
+    component.selectedTask = { id: '1', title: 'Test 1' };
     fixture.detectChanges();
     const element = fixture.nativeElement;
     expect(

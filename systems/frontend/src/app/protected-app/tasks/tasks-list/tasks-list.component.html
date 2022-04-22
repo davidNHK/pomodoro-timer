@@ -6,15 +6,17 @@
   Oops! You are so free now
 </h1>
 <h1
-  *ngIf="selectedTask.length === 1"
+  *ngIf="selectedTask !== null"
   class="flex justify-center"
   data-testid="selected-task"
 >
-  #1 {{ selectedTask[0].title }}
+  Working on: #1 {{ selectedTask?.title }}
 </h1>
-<mat-selection-list [multiple]="false" [(ngModel)]="selectedTask">
+<mat-selection-list [multiple]="false" (selectionChange)="selectTask($event)">
   <mat-list-option
     *ngFor="let task of tasks; let index = index"
+    [selected]="task.id === selectedTask?.id"
+    [disabled]="isTimerRunning"
     [value]="task"
     [attr.data-testid]="'task-list-item-' + index"
   >

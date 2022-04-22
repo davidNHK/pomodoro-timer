@@ -29,8 +29,8 @@ describe('CountdownService', () => {
       await firstValueFrom(countDown),
       await lastValueFrom(countDown),
     ];
-    expect(values[0]).toEqual(1);
-    expect(values[1]).toEqual(2);
+    expect(values[0]).toEqual(0);
+    expect(values[1]).toEqual(500);
   });
 
   it(`#start result stream will stop after 3000 ms`, async () => {

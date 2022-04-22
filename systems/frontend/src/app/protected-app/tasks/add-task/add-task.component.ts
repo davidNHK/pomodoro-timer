@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { CountdownService } from '../countdown.service';
 import { CreateTaskGQL } from '../graphql';
 
 @Component({
@@ -19,8 +20,13 @@ export class AddTaskComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private createTask: CreateTaskGQL,
-    private _snackBar: MatSnackBar,
+    private snackBar: MatSnackBar,
+    private countDownService: CountdownService,
   ) {}
+
+  get isTimerRunning(): boolean {
+    return this.countDownService.running;
+  }
 
   toggleInputForm() {
     this.shouldShowInputForm = !this.shouldShowInputForm;
@@ -35,11 +41,11 @@ export class AddTaskComponent implements OnInit {
       .subscribe(({ errors, loading }) => {
         this.submissionLoading = loading;
         if (!loading && !errors) {
-          this._snackBar.open('Task created', '', { duration: 5000 });
+          this.snackBar.open('Task created', '', { duration: 5000 });
           this.toggleInputForm();
         }
         if (errors)
-          this._snackBar.open(
+          this.snackBar.open(
             'Something went wrong, please try again later',
             '',
             { duration: 2000 },
