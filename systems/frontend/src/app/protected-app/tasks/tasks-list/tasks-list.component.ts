@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import type { MatSelectionListChange } from '@angular/material/list';
 
+import { CountdownService } from '../countdown.service';
 import { AllTasksGQL, Task } from '../graphql';
 
 @Component({
@@ -10,13 +12,30 @@ import { AllTasksGQL, Task } from '../graphql';
 export class TasksListComponent implements OnInit {
   tasks: Task[] = [];
 
-  selectedTask: Task[] = [];
+  constructor(
+    private allTasks: AllTasksGQL,
+    private countDownService: CountdownService,
+  ) {}
 
-  constructor(private allTasks: AllTasksGQL) {}
+  get isTimerRunning(): boolean {
+    return this.countDownService.running;
+  }
 
   ngOnInit(): void {
     this.allTasks.watch().valueChanges.subscribe(({ data }) => {
       this.tasks = data.tasks;
     });
+  }
+
+  set selectedTask(task: Task | null) {
+    this.countDownService.focusOn(task);
+  }
+
+  get selectedTask(): Task | null {
+    return this.countDownService.taskFocused();
+  }
+
+  selectTask(event: MatSelectionListChange): void {
+    this.selectedTask = event.options[0].value;
   }
 }
