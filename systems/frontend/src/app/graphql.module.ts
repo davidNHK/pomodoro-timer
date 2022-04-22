@@ -12,8 +12,8 @@ import { HttpLink } from 'apollo-angular/http';
 import { of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
-import { AuthService } from '../app/auth/auth.service';
 import { environment } from '../environments/environment';
+import { AuthService } from './auth/auth.service';
 
 const refreshExpiredAccessToken = (authService: AuthService, router: Router) =>
   // @ts-expect-error no type for this function
@@ -21,6 +21,10 @@ const refreshExpiredAccessToken = (authService: AuthService, router: Router) =>
     const hasAccessTokenExpired = graphQLErrors?.find(
       graphQLError => graphQLError.extensions?.['code'] === 'ERR_ACCESS_TOKEN',
     );
+    if (hasAccessTokenExpired && !authService.refreshToken) {
+      router.navigate(['/auth/login']);
+      return undefined;
+    }
     if (!hasAccessTokenExpired || !authService.refreshToken) return undefined;
     return authService.refreshAccessToken(authService.refreshToken).pipe(
       mergeMap(({ error }) => {

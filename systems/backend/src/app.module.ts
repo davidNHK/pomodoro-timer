@@ -89,7 +89,10 @@ import { UserModule } from './user/user.module';
         exceptionFactory(errors) {
           throw new BadRequestException({
             code: ErrorCode.ValidationError,
-            errors: errors.map(error => error.toString()),
+            errors: errors.map(error => ({
+              detail: error.toString(),
+              title: 'Validation Error',
+            })),
             meta: { errors },
           });
         },

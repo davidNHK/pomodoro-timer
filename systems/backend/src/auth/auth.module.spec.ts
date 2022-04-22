@@ -10,7 +10,7 @@ const appContext = withNestServerContext({
 
 describe('Auth Module', () => {
   it('should throw error when given code not exist', async () => {
-    const resp = await getRequestAgent(appContext.app.getHttpServer())
+    const { body } = await getRequestAgent(appContext.app.getHttpServer())
       .post('/auth/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,11 +22,12 @@ describe('Auth Module', () => {
         }).toString(),
       )
       .expect(expectResponseCode({ expectedStatusCode: 401 }));
-    expect(resp.body.code).toStrictEqual('ERR_EXCHANGE_CODE');
+    const [error] = body.errors;
+    expect(error.code).toStrictEqual('ERR_EXCHANGE_CODE');
   });
 
   it('should throw error when given refresh token is invalid', async () => {
-    const resp = await getRequestAgent(appContext.app.getHttpServer())
+    const { body } = await getRequestAgent(appContext.app.getHttpServer())
       .post('/auth/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -38,6 +39,7 @@ describe('Auth Module', () => {
         }).toString(),
       )
       .expect(expectResponseCode({ expectedStatusCode: 401 }));
-    expect(resp.body.code).toStrictEqual('ERR_REFRESH_TOKEN');
+    const [error] = body.errors;
+    expect(error.code).toStrictEqual('ERR_REFRESH_TOKEN');
   });
 });

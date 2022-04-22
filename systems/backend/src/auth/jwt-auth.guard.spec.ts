@@ -47,7 +47,8 @@ describe('Test JwtAuthGuard', () => {
       const { body } = await getRequestAgent(context.app.getHttpServer())
         .get('/test/jwt-auth-guard')
         .expect(expectResponseCode({ expectedStatusCode: 401 }));
-      expect(body.code).toStrictEqual('ERR_ACCESS_TOKEN');
+      const [error] = body.errors;
+      expect(error.code).toStrictEqual('ERR_ACCESS_TOKEN');
     });
 
     it('should return 401 when wrong token is provided', async () => {
@@ -55,7 +56,8 @@ describe('Test JwtAuthGuard', () => {
         .get('/test/jwt-auth-guard')
         .set('Authorization', 'Bearer wrong-token')
         .expect(expectResponseCode({ expectedStatusCode: 401 }));
-      expect(body.code).toStrictEqual('ERR_ACCESS_TOKEN');
+      const [error] = body.errors;
+      expect(error.code).toStrictEqual('ERR_ACCESS_TOKEN');
     });
   });
 

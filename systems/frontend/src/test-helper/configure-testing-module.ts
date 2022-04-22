@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import type { Type } from '@angular/core';
 import type { TestModuleMetadata } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
@@ -24,6 +25,7 @@ export function configureTestingModule(moduleDef: TestModuleMetadata) {
       MatToolbarModule,
       MatDividerModule,
       MatTabsModule,
+      HttpClientModule,
       MatButtonModule,
       MatInputModule,
       MatCardModule,

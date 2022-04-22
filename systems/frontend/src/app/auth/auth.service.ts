@@ -33,11 +33,12 @@ export class AuthService {
         catchError((error: HttpErrorResponse) => {
           this.#removeTokens();
           const body = error.error;
-          if (body?.error?.code === 'ERR_EXCHANGE_CODE') return of(body as any);
+          if (body?.errors?.[0]?.code === 'ERR_EXCHANGE_CODE')
+            return of(body as any);
           throw error;
         }),
         map(resp => {
-          if (resp.error) return resp;
+          if (resp.errors) return resp;
           this.accessToken = resp.accessToken;
           this.refreshToken = resp.refreshToken;
           return resp;
@@ -63,7 +64,8 @@ export class AuthService {
         catchError((error: HttpErrorResponse) => {
           this.#removeTokens();
           const body = error.error;
-          if (body?.error?.code === 'ERR_REFRESH_TOKEN') return of(body as any);
+          if (body?.errors?.[0]?.code === 'ERR_REFRESH_TOKEN')
+            return of(body as any);
           throw error;
         }),
         map(resp => {

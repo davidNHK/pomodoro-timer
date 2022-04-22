@@ -10,7 +10,6 @@ import {
   Query,
   Resolver,
 } from '@nestjs/graphql';
-import { ApolloError } from 'apollo-server-errors';
 import { randomUUID } from 'crypto';
 import gql from 'graphql-tag';
 
@@ -18,6 +17,7 @@ import { expectResponseCode } from '../test-helpers/expect-response-code';
 import { getApolloServer } from '../test-helpers/get-apollo-server';
 import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
+import { ApolloException } from './apollo.exception';
 
 @ObjectType()
 class TestModel {
@@ -40,7 +40,10 @@ class TestResolver {
 
   @Query(() => TestModel)
   testQueryWithApolloError() {
-    throw new ApolloError('Foobar', 'ERR_CREATE_RECORD');
+    throw new ApolloException({
+      code: 'ERR_CREATE_RECORD' as any,
+      errors: [{ title: 'Foobar' }],
+    });
   }
 
   @Mutation(() => TestModel)
@@ -80,8 +83,13 @@ describe('General exception filter', () => {
         .get('/test-case/unexpected-error')
         .expect(expectResponseCode({ expectedStatusCode: 500 }));
       expect(body).toStrictEqual({
-        code: 'ERR_UNHANDLED',
-        errors: ['Fake Error!!!'],
+        errors: [
+          {
+            code: 'ERR_UNHANDLED',
+            detail: 'Fake Error!!!',
+            title: 'Error',
+          },
+        ],
         meta: {
           exception: {
             message: 'Fake Error!!!',
@@ -124,7 +132,12 @@ describe('General exception filter', () => {
         {
           extensions: {
             code: 'ERR_UNHANDLED',
-            errors: [],
+            errors: [
+              {
+                detail: 'Fake Error!!!',
+                title: 'Error',
+              },
+            ],
           },
           locations: [
             {
@@ -132,7 +145,7 @@ describe('General exception filter', () => {
               line: 2,
             },
           ],
-          message: 'Fake Error!!!',
+          message: 'Graphql Error',
           path: ['testQuery'],
         },
       ]);
@@ -155,6 +168,11 @@ describe('General exception filter', () => {
         {
           extensions: {
             code: 'ERR_CREATE_RECORD',
+            errors: [
+              {
+                title: 'Foobar',
+              },
+            ],
           },
           locations: [
             {
@@ -162,7 +180,7 @@ describe('General exception filter', () => {
               line: 2,
             },
           ],
-          message: 'Foobar',
+          message: 'Graphql Error',
           path: ['testQueryWithApolloError'],
         },
       ]);

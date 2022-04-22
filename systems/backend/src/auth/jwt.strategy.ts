@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!(await this.userService.isUserIdExist(payload.userId))) {
       throw new UnauthorizedException({
         code: ErrorCode.UserNotFoundError,
-        errors: ['User not found'],
+        errors: [{ title: 'User not found' }],
       });
     }
     return { userId: payload.userId };
