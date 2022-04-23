@@ -19,6 +19,10 @@ export class CountdownService {
     this.workingTask = task;
   }
 
+  hasTaskFocused() {
+    return this.workingTask !== null;
+  }
+
   taskFocused() {
     return this.workingTask;
   }

@@ -16,6 +16,12 @@ registerEnumType(TaskStatus, {
   name: 'TaskStatus',
 });
 
+@InputType()
+export class QueryTasksFilterInput {
+  @Field(() => [TaskStatus], { nullable: false })
+  statuses!: TaskStatus[];
+}
+
 @ObjectType()
 export class Task {
   @Field()

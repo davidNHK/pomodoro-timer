@@ -15,6 +15,7 @@ import gql from 'graphql-tag';
 
 import { expectResponseCode } from '../test-helpers/expect-response-code';
 import { getApolloServer } from '../test-helpers/get-apollo-server';
+import { getGraphqlErrorCodes } from '../test-helpers/get-graphql-error';
 import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
 import { ApolloException } from './apollo.exception';
@@ -202,7 +203,7 @@ describe('General exception filter', () => {
         },
       });
       expect(resp.errors).toBeDefined();
-      expect(resp.errors[0].extensions.code).toEqual('BAD_USER_INPUT');
+      expect(getGraphqlErrorCodes(resp.errors)).toEqual(['BAD_USER_INPUT']);
     });
   });
 });

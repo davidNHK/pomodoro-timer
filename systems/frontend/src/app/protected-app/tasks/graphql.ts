@@ -14,8 +14,8 @@ export interface Task {
 })
 export class AllTasksGQL extends Query<{ taskOnFocus: Task; tasks: Task[] }> {
   override document = gql`
-    query allTasks {
-      tasks {
+    query allTasks($filter: QueryTasksFilterInput!) {
+      tasks(filter: $filter) {
         id
         title
         notes
@@ -50,12 +50,17 @@ export class CreateTaskGQL extends Mutation {
   }
 
   override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
-    return super
-      .mutate(variables, {
-        ...options,
-        refetchQueries: [{ query: this.allTasksGQL.document }],
-      })
-      .pipe();
+    return super.mutate(variables, {
+      ...options,
+      refetchQueries: [
+        {
+          query: this.allTasksGQL.document,
+          variables: {
+            filter: { statuses: ['PENDING', 'STARTED'] },
+          },
+        },
+      ],
+    });
   }
 }
 
@@ -80,11 +85,51 @@ export class SetUserFocusTaskGQL extends Mutation {
   }
 
   override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
-    return super
-      .mutate(variables, {
-        ...options,
-        refetchQueries: [{ query: this.allTasksGQL.document }],
-      })
-      .pipe();
+    return super.mutate(variables, {
+      ...options,
+      refetchQueries: [
+        {
+          query: this.allTasksGQL.document,
+          variables: {
+            filter: { statuses: ['PENDING', 'STARTED'] },
+          },
+        },
+      ],
+    });
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FinishFocusedTaskGQL extends Mutation {
+  override document = gql`
+    mutation finishFocusingTask($taskId: ID!) {
+      finishFocusingTask(taskId: $taskId) {
+        id
+        title
+      }
+    }
+  `;
+
+  constructor(
+    private readonly allTasksGQL: AllTasksGQL,
+    override apollo: Apollo,
+  ) {
+    super(apollo);
+  }
+
+  override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
+    return super.mutate(variables, {
+      ...options,
+      refetchQueries: [
+        {
+          query: this.allTasksGQL.document,
+          variables: {
+            filter: { statuses: ['PENDING', 'STARTED'] },
+          },
+        },
+      ],
+    });
   }
 }

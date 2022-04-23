@@ -3,24 +3,28 @@
     <mat-tab-group
       mat-stretch-tabs
       mat-align-tabs="center"
-      [selectedIndex]="selectedIndex"
+      [(selectedIndex)]="selectedIndex"
     >
       <mat-tab label="Pomodoro" [disabled]="isTimerRunning">
         <app-countdown
           [type]="CountdownType.POMODORO"
           (countdownComplete)="completePomodoro()"
+          (timerStart)="startPomodoro()"
+          (taskFinish)="taskFinish()"
         ></app-countdown>
       </mat-tab>
       <mat-tab label="Short break" [disabled]="isTimerRunning">
         <app-countdown
           [type]="CountdownType.SHORT_BREAK"
           (countdownComplete)="completeBreak()"
+          (taskFinish)="taskFinish()"
         ></app-countdown>
       </mat-tab>
       <mat-tab label="Long break" [disabled]="isTimerRunning">
         <app-countdown
           [type]="CountdownType.LONG_BREAK"
           (countdownComplete)="completeBreak()"
+          (taskFinish)="taskFinish()"
         ></app-countdown>
       </mat-tab>
     </mat-tab-group>

@@ -22,10 +22,16 @@ export class TasksListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.allTasks.watch().valueChanges.subscribe(({ data }) => {
-      this.tasks = data.tasks;
-      this.selectedTask = data.taskOnFocus;
-    });
+    this.allTasks
+      .watch({
+        filter: {
+          statuses: ['PENDING', 'STARTED'],
+        },
+      })
+      .valueChanges.subscribe(({ data }) => {
+        this.tasks = data.tasks;
+        this.selectedTask = data.taskOnFocus;
+      });
   }
 
   set selectedTask(task: Task | null) {

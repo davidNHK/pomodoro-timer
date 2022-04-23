@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { CountdownService } from '../countdown.service';
 import { CountdownType } from '../countdown/countdown.component';
+import { FinishFocusedTaskGQL, SetUserFocusTaskGQL } from '../graphql';
 
 const CountdownTabIndex = {
   [CountdownType.POMODORO]: 0,
@@ -19,7 +20,11 @@ export class TaskTimerComponent {
 
   selectedIndex = CountdownTabIndex[CountdownType.POMODORO];
 
-  constructor(private countDownService: CountdownService) {}
+  constructor(
+    private countDownService: CountdownService,
+    private setUserFocusTaskGQL: SetUserFocusTaskGQL,
+    private finishFocusedTaskGQL: FinishFocusedTaskGQL,
+  ) {}
 
   get isTimerRunning(): boolean {
     return this.countDownService.running;
@@ -31,5 +36,25 @@ export class TaskTimerComponent {
 
   completeBreak() {
     this.selectedIndex = CountdownTabIndex[CountdownType.POMODORO];
+  }
+
+  taskFinish() {
+    this.finishFocusedTaskGQL
+      .mutate({
+        taskId: this.countDownService.taskFocused()?.id,
+      })
+      .subscribe(({ data }) => {
+        if (!!data) {
+          this.selectedIndex = CountdownTabIndex[CountdownType.POMODORO];
+        }
+      });
+  }
+
+  startPomodoro() {
+    this.setUserFocusTaskGQL
+      .mutate({
+        taskId: this.countDownService.taskFocused()?.id,
+      })
+      .subscribe();
   }
 }

@@ -10,7 +10,26 @@ import { TaskStatus } from './task.model';
 export class TaskService {
   private tasks: { [userId: string]: Task[] } = {};
 
-  private focusedTask: { [userId: string]: Task } = {};
+  private focusedTask: { [userId: string]: Task | null } = {};
+
+  async finishUserFocusingTask({
+    taskId,
+    userId,
+  }: {
+    taskId: string;
+    userId: string;
+  }) {
+    const task = this.tasks[userId].find(task => task.id === taskId);
+    if (!task) {
+      throw new BadRequestException({
+        code: ErrorCode.ValidationError,
+        errors: [{ title: "Task doesn't exist" }],
+      });
+    }
+    task.status = TaskStatus.DONE;
+    this.focusedTask[userId] = null;
+    return task;
+  }
 
   async getUserFocusedTask({ userId }: { userId: string }) {
     return this.focusedTask[userId];
@@ -35,8 +54,17 @@ export class TaskService {
     return this.focusedTask[userId];
   }
 
-  async getUserTasks(userId: string): Promise<Task[]> {
-    return this.tasks[userId] || [];
+  async getUserTasks(
+    userId: string,
+    {
+      statuses,
+    }: {
+      statuses?: TaskStatus[];
+    },
+  ): Promise<Task[]> {
+    return (this.tasks[userId] || []).filter(task => {
+      return statuses?.includes(task.status) ?? true;
+    });
   }
 
   async appendUserTaskList(userId: string, task: TaskInput): Promise<Task> {
