@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import type { DocumentNode } from 'graphql';
+import type { DocumentNode, GraphQLError } from 'graphql';
 import { print } from 'graphql/language/printer';
 
 import { expectResponseCode } from './expect-response-code';
@@ -11,7 +11,7 @@ import { getRequestAgent } from './get-request-agent';
 export function getApolloServer(app: INestApplication) {
   const requestAgent = getRequestAgent(app.getHttpServer());
   return {
-    async executeOperation({
+    async executeOperation<D = any>({
       http,
       query,
       variables,
@@ -21,7 +21,7 @@ export function getApolloServer(app: INestApplication) {
       };
       query: DocumentNode;
       variables?: Record<string, any>;
-    }) {
+    }): Promise<{ data: D; errors?: GraphQLError[] }> {
       const requestChain = requestAgent.post('/graphql');
       Object.entries(http?.headers ?? {}).forEach(([key, value]) => {
         requestChain.set(key, value);

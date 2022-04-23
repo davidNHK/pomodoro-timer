@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { mergeMap, Observable, Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import type { Subscription } from 'rxjs';
 
 import { CountdownService } from '../countdown.service';
-import { SetUserFocusTaskGQL } from '../graphql';
 
 export enum CountdownType {
   LONG_BREAK = 'long break',
@@ -25,16 +23,23 @@ export class CountdownComponent implements OnInit {
     type: CountdownType;
   }> = new EventEmitter();
 
+  @Output()
+  taskFinish: EventEmitter<{
+    type: CountdownType;
+  }> = new EventEmitter();
+
+  @Output()
+  timerStart: EventEmitter<{
+    type: CountdownType;
+  }> = new EventEmitter();
+
   protected countdownMs = 0;
 
   countdownSubscription?: Subscription;
 
   runDown = 0;
 
-  constructor(
-    private countDownService: CountdownService,
-    private setUserFocusTaskGQL: SetUserFocusTaskGQL,
-  ) {}
+  constructor(private countDownService: CountdownService) {}
 
   private getCountdownMs(): number {
     switch (this.type) {
@@ -52,6 +57,10 @@ export class CountdownComponent implements OnInit {
   ngOnInit(): void {
     this.countdownMs = this.getCountdownMs();
     this.runDown = this.countdownMs;
+  }
+
+  get hasFocusedTask(): boolean {
+    return this.countDownService.hasTaskFocused();
   }
 
   get isTimerRunning(): boolean {
@@ -75,29 +84,28 @@ export class CountdownComponent implements OnInit {
   }
 
   start(): void {
-    let countdownObservable: Observable<number>;
     if (this.type === CountdownType.POMODORO) {
-      countdownObservable = this.setUserFocusTaskGQL
-        .mutate({
-          taskId: this.countDownService.taskFocused()?.id,
-        })
-        .pipe(
-          filter(({ data }) => !!data),
-          mergeMap(() => this.countDownService.start(this.countdownMs)),
-        );
-    } else {
-      countdownObservable = this.countDownService.start(this.countdownMs);
+      this.timerStart.emit({
+        type: this.type,
+      });
     }
-    this.countdownSubscription = countdownObservable.subscribe({
-      complete: () => this.complete(),
-      next: ms => {
-        this.runDown = this.countdownMs - ms;
-      },
-    });
+    this.countdownSubscription = this.countDownService
+      .start(this.countdownMs)
+      .subscribe({
+        complete: () => this.complete(),
+        next: ms => {
+          this.runDown = this.countdownMs - ms;
+        },
+      });
   }
 
   stop(): void {
     this.countdownSubscription?.unsubscribe();
     this.reset();
+  }
+
+  finish(): void {
+    this.reset();
+    this.taskFinish.emit({ type: this.type });
   }
 }

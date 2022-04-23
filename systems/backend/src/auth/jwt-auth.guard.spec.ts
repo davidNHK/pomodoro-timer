@@ -6,6 +6,7 @@ import gql from 'graphql-tag';
 
 import { expectResponseCode } from '../test-helpers/expect-response-code';
 import { getApolloServer } from '../test-helpers/get-apollo-server';
+import { getGraphqlErrorCodes } from '../test-helpers/get-graphql-error';
 import { getRequestAgent } from '../test-helpers/get-request-agent';
 import { withNestServerContext } from '../test-helpers/nest-app-context';
 import { signToken } from '../test-helpers/sign-token';
@@ -73,16 +74,18 @@ describe('Test JwtAuthGuard', () => {
       const resp = await getApolloServer(context.app).executeOperation({
         query: SIMPLE_TEST_QUERY,
       });
-      expect(resp.errors).toBeDefined();
-      expect(resp.errors[0].extensions.code).toStrictEqual('ERR_ACCESS_TOKEN');
+      expect(getGraphqlErrorCodes(resp.errors)).toStrictEqual([
+        'ERR_ACCESS_TOKEN',
+      ]);
     });
 
     it('should show error code on extensions when given wrong token', async () => {
       const resp = await getApolloServer(context.app).executeOperation({
         query: SIMPLE_TEST_QUERY,
       });
-      expect(resp.errors).toBeDefined();
-      expect(resp.errors[0].extensions.code).toStrictEqual('ERR_ACCESS_TOKEN');
+      expect(getGraphqlErrorCodes(resp.errors)).toStrictEqual([
+        'ERR_ACCESS_TOKEN',
+      ]);
     });
 
     it('should show error code ERR_ACCESS_TOKEN when given token expired', async () => {
@@ -98,8 +101,9 @@ describe('Test JwtAuthGuard', () => {
         },
         query: SIMPLE_TEST_QUERY,
       });
-      expect(resp.errors).toBeDefined();
-      expect(resp.errors[0].extensions.code).toStrictEqual('ERR_ACCESS_TOKEN');
+      expect(getGraphqlErrorCodes(resp.errors)).toStrictEqual([
+        'ERR_ACCESS_TOKEN',
+      ]);
     });
   });
 });

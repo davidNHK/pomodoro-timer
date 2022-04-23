@@ -7,12 +7,17 @@ scalar Date
 
 type Mutation {
   createTask(data: TaskInput!): Task!
+  finishFocusingTask(taskId: ID!): Task!
   focusOnTask(taskId: ID!): Task!
 }
 
 type Query {
   taskOnFocus: Task
-  tasks: [Task!]!
+  tasks(filter: QueryTasksFilterInput!): [Task!]!
+}
+
+input QueryTasksFilterInput {
+  statuses: [TaskStatus!]!
 }
 
 type Task {
