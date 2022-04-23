@@ -18,8 +18,10 @@ import { AuthService } from './auth/auth.service';
 const refreshExpiredAccessToken = (authService: AuthService, router: Router) =>
   // @ts-expect-error no type for this function
   onError(({ forward, graphQLErrors, operation }) => {
-    const hasAccessTokenExpired = graphQLErrors?.find(
-      graphQLError => graphQLError.extensions?.['code'] === 'ERR_ACCESS_TOKEN',
+    const hasAccessTokenExpired = graphQLErrors?.find(graphQLError =>
+      ['ERR_USER_NOT_FOUND', 'ERR_ACCESS_TOKEN'].includes(
+        graphQLError.extensions?.['code'] as string,
+      ),
     );
     if (hasAccessTokenExpired && !authService.refreshToken) {
       router.navigate(['/auth/login']);

@@ -1,5 +1,7 @@
+import { RouterModule } from '@angular/router';
 import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 
+import { GraphQLModule } from '../../../graphql.module';
 import { CountdownComponent } from '../countdown/countdown.component';
 import { FormatMsPipe } from '../format-ms.pipe';
 import { TaskTimerComponent } from './task-timer.component';
@@ -10,6 +12,7 @@ describe('TaskTimerComponent', () => {
       TaskTimerComponent,
       {
         declarations: [TaskTimerComponent, FormatMsPipe, CountdownComponent],
+        imports: [GraphQLModule, RouterModule.forRoot([])],
       },
     );
     return { component };

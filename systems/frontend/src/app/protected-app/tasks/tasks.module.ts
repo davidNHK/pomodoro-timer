@@ -12,7 +12,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AddTaskComponent } from './add-task/add-task.component';
 import { CountdownComponent } from './countdown/countdown.component';
 import { FormatMsPipe } from './format-ms.pipe';
-import { AllTasksGQL, CreateTaskGQL } from './graphql';
+import { AllTasksGQL, CreateTaskGQL, SetUserFocusTaskGQL } from './graphql';
 import { TaskTimerComponent } from './task-timer/task-timer.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 
@@ -37,6 +37,6 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     MatListModule,
     MatTabsModule,
   ],
-  providers: [AllTasksGQL, CreateTaskGQL],
+  providers: [AllTasksGQL, CreateTaskGQL, SetUserFocusTaskGQL],
 })
 export class TasksModule {}

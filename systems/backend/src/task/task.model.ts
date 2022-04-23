@@ -1,4 +1,20 @@
-import { Field, InputType, ObjectType, OmitType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  OmitType,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+export enum TaskStatus {
+  DONE = 'DONE',
+  PENDING = 'PENDING',
+  STARTED = 'STARTED',
+}
+
+registerEnumType(TaskStatus, {
+  name: 'TaskStatus',
+});
 
 @ObjectType()
 export class Task {
@@ -13,11 +29,14 @@ export class Task {
 
   @Field({ nullable: true })
   notes?: string;
+
+  @Field(() => TaskStatus, { nullable: false })
+  status!: TaskStatus;
 }
 
 @InputType()
 export class TaskInput extends OmitType(
   Task,
-  ['id', 'createdAt'] as const,
+  ['id', 'createdAt', 'status'] as const,
   InputType,
 ) {}

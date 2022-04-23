@@ -24,6 +24,7 @@ export class TasksListComponent implements OnInit {
   ngOnInit(): void {
     this.allTasks.watch().valueChanges.subscribe(({ data }) => {
       this.tasks = data.tasks;
+      this.selectedTask = data.taskOnFocus;
     });
   }
 

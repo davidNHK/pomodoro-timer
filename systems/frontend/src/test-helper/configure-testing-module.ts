@@ -45,22 +45,7 @@ export async function configureTestingModuleForComponent<T>(
 ) {
   await configureTestingModule({
     declarations: moduleDef.declarations,
-    imports: [
-      BrowserAnimationsModule,
-      FormsModule,
-      ReactiveFormsModule,
-      MatToolbarModule,
-      MatDividerModule,
-      MatTabsModule,
-      MatButtonModule,
-      MatInputModule,
-      MatCardModule,
-      MatSnackBarModule,
-      MatProgressSpinnerModule,
-      MatIconModule,
-      MatListModule,
-      ...(moduleDef.imports || []),
-    ],
+    imports: moduleDef.imports,
     providers: moduleDef.providers,
   }).compileComponents();
   const fixture = TestBed.createComponent(componentCls);
