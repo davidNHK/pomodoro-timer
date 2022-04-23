@@ -7,9 +7,11 @@ scalar Date
 
 type Mutation {
   createTask(data: TaskInput!): Task!
+  focusOnTask(taskId: ID!): Task!
 }
 
 type Query {
+  taskOnFocus: Task
   tasks: [Task!]!
 }
 
@@ -17,10 +19,17 @@ type Task {
   createdAt: Date!
   id: String!
   notes: String
+  status: TaskStatus!
   title: String!
 }
 
 input TaskInput {
   notes: String
   title: String!
+}
+
+enum TaskStatus {
+  DONE
+  PENDING
+  STARTED
 }

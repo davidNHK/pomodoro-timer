@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+import { randomUUID } from 'crypto';
 import gql from 'graphql-tag';
 
 import { getApolloServer } from '../test-helpers/get-apollo-server';
@@ -21,6 +22,24 @@ const GET_ALL_TASKS = gql`
 const CREATE_TASK = gql`
   mutation createTask($data: TaskInput!) {
     createTask(data: $data) {
+      id
+      title
+    }
+  }
+`;
+
+const START_FOCUS_ON_TASK = gql`
+  mutation startFocusOnTask($taskId: ID!) {
+    focusOnTask(taskId: $taskId) {
+      id
+      title
+    }
+  }
+`;
+
+const TASK_ON_FOCUS = gql`
+  query taskOnFocus {
+    taskOnFocus {
       id
       title
     }
@@ -70,5 +89,53 @@ Foo Bar
         title: 'test2',
       },
     ]);
+  });
+
+  it('should get task on focus when call query after mutation', async () => {
+    const app = appContext.app;
+    const { accessToken } = await signToken(app);
+    const server = getApolloServer(app);
+    const { data } = await server.executeOperation({
+      http: { headers: { authorization: `Bearer ${accessToken}` } },
+      query: CREATE_TASK,
+      variables: {
+        data: {
+          title: 'test1',
+        },
+      },
+    });
+    const taskId = data.createTask.id;
+    await server.executeOperation({
+      http: { headers: { authorization: `Bearer ${accessToken}` } },
+      query: START_FOCUS_ON_TASK,
+      variables: {
+        taskId,
+      },
+    });
+    const {
+      data: { taskOnFocus },
+    } = await server.executeOperation({
+      http: { headers: { authorization: `Bearer ${accessToken}` } },
+      query: TASK_ON_FOCUS,
+    });
+
+    expect(taskOnFocus.id).toEqual(taskId);
+  });
+
+  it('should throw error on focus when given taskId not exist', async () => {
+    const app = appContext.app;
+    const { accessToken } = await signToken(app);
+    const server = getApolloServer(app);
+    const taskId = randomUUID();
+    const { errors } = await server.executeOperation({
+      http: { headers: { authorization: `Bearer ${accessToken}` } },
+      query: START_FOCUS_ON_TASK,
+      variables: {
+        taskId,
+      },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors[0].extensions.code).toEqual('ERR_VALIDATION');
   });
 });
