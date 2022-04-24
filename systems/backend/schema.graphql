@@ -9,11 +9,21 @@ type Mutation {
   createTask(data: TaskInput!): Task!
   finishFocusingTask(taskId: ID!): Task!
   focusOnTask(taskId: ID!): Task!
+  recordPomodoro(taskId: ID!): Pomodoro!
+}
+
+type Pomodoro {
+  completeAt: Date!
+  id: ID!
+  startAt: Date!
+  taskId: String!
+  userId: String!
 }
 
 type Query {
   taskOnFocus: Task
-  tasks(filter: QueryTasksFilterInput!): [Task!]!
+  tasks(filter: QueryTasksFilterInput): [Task!]!
+  todo: [Task!]!
 }
 
 input QueryTasksFilterInput {
@@ -21,15 +31,19 @@ input QueryTasksFilterInput {
 }
 
 type Task {
+  completedPomodoro: Float
   createdAt: Date!
   id: String!
   notes: String
+  startedAt: Date
   status: TaskStatus!
   title: String!
 }
 
 input TaskInput {
+  completedPomodoro: Float
   notes: String
+  startedAt: Date
   title: String!
 }
 

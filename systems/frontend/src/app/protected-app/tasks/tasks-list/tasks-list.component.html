@@ -10,7 +10,8 @@
   class="flex justify-center"
   data-testid="selected-task"
 >
-  Working on: #1 {{ selectedTask?.title }}
+  #{{ (selectedTask?.completedPomodoro ?? 0) + 1 | number: '2.0' }}
+  {{ selectedTask?.title }}
 </h1>
 <mat-selection-list [multiple]="false" (selectionChange)="selectTask($event)">
   <mat-list-option

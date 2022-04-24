@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { BadRequestException } from '../error-hanlding/bad-request.exception';
+import { NotFoundException } from '../error-hanlding/not-found.exception';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
 import { TaskStatus } from './task.model';
 import { TaskService } from './task.service';
@@ -56,6 +56,6 @@ describe('TaskService', () => {
         taskId: 'fakeId',
         userId: 'testId',
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(NotFoundException);
   });
 });

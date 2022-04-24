@@ -1,7 +1,7 @@
 import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 import { of } from 'rxjs';
 
-import { AllTasksGQL } from '../graphql';
+import { TodoGQL } from '../graphql';
 import { TasksListComponent } from './tasks-list.component';
 
 describe('TasksListComponent', () => {
@@ -12,10 +12,10 @@ describe('TasksListComponent', () => {
         declarations: [TasksListComponent],
         providers: [
           {
-            provide: AllTasksGQL,
+            provide: TodoGQL,
             useValue: {
               watch: () => {
-                return { valueChanges: of({ data: { tasks: [] } }) };
+                return { valueChanges: of({ data: { todo: [] } }) };
               },
             },
           },
@@ -35,12 +35,12 @@ describe('TasksListComponent', () => {
         declarations: [TasksListComponent],
         providers: [
           {
-            provide: AllTasksGQL,
+            provide: TodoGQL,
             useValue: {
               watch: () => {
                 return {
                   valueChanges: of({
-                    data: { tasks: [{ title: 'Test 1' }, { title: 'Test2' }] },
+                    data: { todo: [{ title: 'Test 1' }, { title: 'Test2' }] },
                   }),
                 };
               },
@@ -62,12 +62,12 @@ describe('TasksListComponent', () => {
         declarations: [TasksListComponent],
         providers: [
           {
-            provide: AllTasksGQL,
+            provide: TodoGQL,
             useValue: {
               watch: () => {
                 return {
                   valueChanges: of({
-                    data: { tasks: [{ title: 'Test 1' }, { title: 'Test2' }] },
+                    data: { todo: [{ title: 'Test 1' }, { title: 'Test2' }] },
                   }),
                 };
               },
