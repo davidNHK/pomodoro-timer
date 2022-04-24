@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import type { MatSelectionListChange } from '@angular/material/list';
 
 import { CountdownService } from '../countdown.service';
-import { AllTasksGQL, Task } from '../graphql';
+import { Task, TodoGQL } from '../graphql';
 
 @Component({
   selector: 'app-tasks-list',
@@ -13,7 +13,7 @@ export class TasksListComponent implements OnInit {
   tasks: Task[] = [];
 
   constructor(
-    private allTasks: AllTasksGQL,
+    private todoGQL: TodoGQL,
     private countDownService: CountdownService,
   ) {}
 
@@ -22,16 +22,10 @@ export class TasksListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.allTasks
-      .watch({
-        filter: {
-          statuses: ['PENDING', 'STARTED'],
-        },
-      })
-      .valueChanges.subscribe(({ data }) => {
-        this.tasks = data.tasks;
-        this.selectedTask = data.taskOnFocus;
-      });
+    this.todoGQL.watch().valueChanges.subscribe(({ data }) => {
+      this.tasks = data.todo;
+      this.selectedTask = data.taskOnFocus;
+    });
   }
 
   set selectedTask(task: Task | null) {

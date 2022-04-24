@@ -1,5 +1,6 @@
 import {
   Field,
+  ID,
   InputType,
   ObjectType,
   OmitType,
@@ -23,6 +24,24 @@ export class QueryTasksFilterInput {
 }
 
 @ObjectType()
+export class Pomodoro {
+  @Field(() => ID)
+  declare id: string;
+
+  @Field()
+  userId!: string;
+
+  @Field()
+  taskId!: string;
+
+  @Field()
+  completeAt!: Date;
+
+  @Field()
+  startAt!: Date;
+}
+
+@ObjectType()
 export class Task {
   @Field()
   declare id: string;
@@ -38,6 +57,12 @@ export class Task {
 
   @Field(() => TaskStatus, { nullable: false })
   status!: TaskStatus;
+
+  @Field({ nullable: true })
+  startedAt?: Date;
+
+  @Field({ nullable: true })
+  completedPomodoro?: number;
 }
 
 @InputType()

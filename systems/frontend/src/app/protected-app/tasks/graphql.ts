@@ -3,6 +3,7 @@ import { Apollo, gql, Mutation, Query } from 'apollo-angular';
 import type { MutationOptionsAlone } from 'apollo-angular/types';
 
 export interface Task {
+  completedPomodoro?: number;
   id: string;
   notes?: string;
   title: string;
@@ -12,10 +13,10 @@ export interface Task {
 @Injectable({
   providedIn: 'root',
 })
-export class AllTasksGQL extends Query<{ taskOnFocus: Task; tasks: Task[] }> {
+export class TodoGQL extends Query<{ taskOnFocus: Task; todo: Task[] }> {
   override document = gql`
-    query allTasks($filter: QueryTasksFilterInput!) {
-      tasks(filter: $filter) {
+    query todo {
+      todo {
         id
         title
         notes
@@ -24,6 +25,7 @@ export class AllTasksGQL extends Query<{ taskOnFocus: Task; tasks: Task[] }> {
         id
         title
         notes
+        completedPomodoro
       }
     }
   `;
@@ -42,10 +44,7 @@ export class CreateTaskGQL extends Mutation {
     }
   `;
 
-  constructor(
-    private readonly allTasksGQL: AllTasksGQL,
-    override apollo: Apollo,
-  ) {
+  constructor(private readonly todoGQL: TodoGQL, override apollo: Apollo) {
     super(apollo);
   }
 
@@ -54,10 +53,7 @@ export class CreateTaskGQL extends Mutation {
       ...options,
       refetchQueries: [
         {
-          query: this.allTasksGQL.document,
-          variables: {
-            filter: { statuses: ['PENDING', 'STARTED'] },
-          },
+          query: this.todoGQL.document,
         },
       ],
     });
@@ -77,10 +73,7 @@ export class SetUserFocusTaskGQL extends Mutation {
     }
   `;
 
-  constructor(
-    private readonly allTasksGQL: AllTasksGQL,
-    override apollo: Apollo,
-  ) {
+  constructor(private readonly todoGQL: TodoGQL, override apollo: Apollo) {
     super(apollo);
   }
 
@@ -89,10 +82,36 @@ export class SetUserFocusTaskGQL extends Mutation {
       ...options,
       refetchQueries: [
         {
-          query: this.allTasksGQL.document,
-          variables: {
-            filter: { statuses: ['PENDING', 'STARTED'] },
-          },
+          query: this.todoGQL.document,
+        },
+      ],
+    });
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RecordPomodoroGQL extends Mutation {
+  override document = gql`
+    mutation ($taskId: ID!) {
+      recordPomodoro(taskId: $taskId) {
+        id
+      }
+    }
+  `;
+
+  constructor(private readonly todoGQL: TodoGQL, override apollo: Apollo) {
+    super(apollo);
+  }
+
+  override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
+    return super.mutate(variables, {
+      ...options,
+      awaitRefetchQueries: true,
+      refetchQueries: [
+        {
+          query: this.todoGQL.document,
         },
       ],
     });
@@ -112,10 +131,7 @@ export class FinishFocusedTaskGQL extends Mutation {
     }
   `;
 
-  constructor(
-    private readonly allTasksGQL: AllTasksGQL,
-    override apollo: Apollo,
-  ) {
+  constructor(private readonly todoGQL: TodoGQL, override apollo: Apollo) {
     super(apollo);
   }
 
@@ -124,10 +140,7 @@ export class FinishFocusedTaskGQL extends Mutation {
       ...options,
       refetchQueries: [
         {
-          query: this.allTasksGQL.document,
-          variables: {
-            filter: { statuses: ['PENDING', 'STARTED'] },
-          },
+          query: this.todoGQL.document,
         },
       ],
     });

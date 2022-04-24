@@ -1,5 +1,10 @@
 <mat-card>
-  <mat-card-content>
+  <mat-card-content *ngIf="loading">
+    <section class="flex justify-center">
+      <mat-spinner></mat-spinner>
+    </section>
+  </mat-card-content>
+  <mat-card-content *ngIf="!loading">
     <mat-tab-group
       mat-stretch-tabs
       mat-align-tabs="center"
