@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { ConnectedProvider } from './connected-provider.model';
+import { ConnectedProvider } from './connected-provider/connected-provider.model';
 
 @ObjectType()
 export class User {

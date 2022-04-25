@@ -1,9 +1,28 @@
-import { Field, InputType, ObjectType, OmitType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  OmitType,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+export enum UserProvider {
+  ATLASSIAN = 'atlassian',
+  GOOGLE = 'google',
+}
+
+registerEnumType(UserProvider, {
+  name: 'UserProvider',
+});
 
 @ObjectType()
 export class ConnectedProvider {
-  @Field({ nullable: false })
-  provider!: 'atlassian' | 'google';
+  @Field(() => ID)
+  declare id: string;
+
+  @Field(() => UserProvider, { nullable: false })
+  provider!: UserProvider;
 
   @Field({ nullable: false })
   connectedToUserId!: string;
@@ -26,6 +45,7 @@ export class ConnectedProvider {
 
 @InputType()
 export class ConnectedProviderInput extends OmitType(ConnectedProvider, [
+  'id',
   'connectedToUserId',
   'connectedAt',
 ] as const) {}

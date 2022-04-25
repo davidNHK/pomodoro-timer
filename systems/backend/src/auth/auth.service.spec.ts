@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import { JwtModule } from '@nestjs/jwt';
 import { setTimeout } from 'timers/promises';
 
+import { UnauthorizedException } from '../error-hanlding/unauthorized.exception';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -36,6 +37,15 @@ describe('AuthService', () => {
       await authService.exchangeTokenFromCode(code);
     expect(accessToken).toBeDefined();
     expect(refreshToken).toBeDefined();
+  });
+
+  it('should throw error when given code related to userId not exist', async () => {
+    const module = await context.moduleBuilder.compile();
+    const authService = module.get<AuthService>(AuthService);
+    const code = await authService.signTokenExchangeCode('hello-world');
+    await expect(authService.exchangeTokenFromCode(code)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('should get new access token when given refresh token is valid', async () => {
