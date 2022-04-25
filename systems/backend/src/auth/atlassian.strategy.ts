@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import OAuth2Strategy from 'passport-oauth2';
 
-import type { ConnectedProviderInput } from '../user/connected-provider.model';
+import type { ConnectedProviderInput } from '../user/connected-provider/connected-provider.model';
+import { UserProvider } from '../user/connected-provider/connected-provider.model';
 import { SessionStore } from './session.store';
 
 @Injectable()
@@ -46,7 +47,7 @@ export class AtlassianStrategy extends PassportStrategy(
         try {
           const json = JSON.parse(String(body));
           profile = {
-            provider: 'atlassian',
+            provider: UserProvider.ATLASSIAN,
             userAvatar: json.picture,
             userEmail: json.email,
             userId: json.account_id,

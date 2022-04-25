@@ -2,7 +2,7 @@ import { Controller, Get, Redirect, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 
-import { UserService } from '../user/user.service';
+import { ConnectedProviderService } from '../user/connected-provider/connected-provider.service';
 import { AtlassianAuthGuard } from './atlassian-auth.guard';
 import { AuthService } from './auth.service';
 
@@ -10,8 +10,8 @@ import { AuthService } from './auth.service';
 export class AtlassianController {
   constructor(
     private configService: ConfigService,
-    private userService: UserService,
     private authService: AuthService,
+    private connectedProviderService: ConnectedProviderService,
   ) {}
 
   @UseGuards(AtlassianAuthGuard)
@@ -26,10 +26,16 @@ export class AtlassianController {
   async callback(@Req() req: Request) {
     const user = req.user as any;
     const authInfo = req.authInfo as any;
-    const userConnectedTo = await this.userService.connectProviderToUser({
-      connectProvider: user,
-      connectUserId: authInfo?.state?.currentUserId,
-    });
+    const userConnectedTo =
+      await this.connectedProviderService.connectProviderToUser({
+        connectProvider: user,
+        connectUserId: authInfo?.state?.currentUserId,
+      });
+    await this.connectedProviderService.saveUserConnectedCredential(
+      userConnectedTo.id,
+      user.userId,
+      authInfo,
+    );
     const code = await this.authService.signTokenExchangeCode(
       userConnectedTo.id,
     );
