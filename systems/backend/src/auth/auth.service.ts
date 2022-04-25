@@ -9,11 +9,15 @@ import type { TokenUserPayload } from './token-user-payload';
 
 @Injectable()
 export class AuthService {
-  private tokenCodes: {
+  private tokenExchangeCodes: {
     [code: string]: {
       expires: number;
       userId: string;
     };
+  } = {};
+
+  private userRefreshTokens: {
+    [userId: string]: string;
   } = {};
 
   constructor(
@@ -28,23 +32,27 @@ export class AuthService {
   async signTokenExchangeCode(userId: string) {
     const code = this.randomId();
     const expires = Date.now() + 1000 * 60 * 5; // 5 minute
-    this.tokenCodes[code] = { expires, userId };
+    this.tokenExchangeCodes[code] = { expires, userId };
     return code;
   }
 
   async exchangeTokenFromCode(code: string, signTokenOptions?: JwtSignOptions) {
-    const { expires, userId } = this.tokenCodes[code] ?? {};
-    if (!userId || Date.now() > expires) {
+    const { expires, userId } = this.tokenExchangeCodes[code] ?? {};
+    if (
+      !userId ||
+      !(await this.userService.isUserIdExist(userId)) ||
+      Date.now() > expires
+    ) {
       throw new UnauthorizedException({
         code: ErrorCode.ExchangeCodeError,
         errors: [{ title: 'Exchange token from code error' }],
         meta: { code, expires, userId },
       });
     }
-    delete this.tokenCodes[code];
+    delete this.tokenExchangeCodes[code];
     const payload: TokenUserPayload = { userId };
     const refreshToken = this.jwtService.sign(payload);
-    await this.userService.setUserRefreshToken(userId, refreshToken);
+    this.userRefreshTokens[userId] = refreshToken;
     return {
       accessToken: this.jwtService.sign(payload, signTokenOptions),
       refreshToken,
@@ -66,9 +74,7 @@ export class AuthService {
       });
     }
 
-    const currentRefreshToken = await this.userService.getUserRefreshToken(
-      userId,
-    );
+    const currentRefreshToken = this.userRefreshTokens[userId];
 
     if (!currentRefreshToken || currentRefreshToken !== refreshToken) {
       throw new UnauthorizedException({
@@ -83,7 +89,7 @@ export class AuthService {
 
     const payload: TokenUserPayload = { userId };
     const newRefreshToken = this.jwtService.sign(payload);
-    await this.userService.setUserRefreshToken(userId, newRefreshToken);
+    this.userRefreshTokens[userId] = newRefreshToken;
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: newRefreshToken,

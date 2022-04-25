@@ -76,14 +76,6 @@ export class UserService {
     return this.connectedProvider[providerId];
   }
 
-  async setUserRefreshToken(userId: string, refreshToken: string) {
-    this.users[userId].refreshToken = refreshToken;
-  }
-
-  async getUserRefreshToken(userId: string) {
-    return this.users[userId].refreshToken;
-  }
-
   async isUserIdExist(userId: string) {
     return !!this.users[userId];
   }
