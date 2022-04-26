@@ -13,6 +13,7 @@ import { AddTaskComponent } from './add-task/add-task.component';
 import { CountdownComponent } from './countdown/countdown.component';
 import { FormatMsPipe } from './format-ms.pipe';
 import {
+  AssignedTaskGQL,
   CreateTaskGQL,
   FinishFocusedTaskGQL,
   RecordPomodoroGQL,
@@ -49,6 +50,7 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     SetUserFocusTaskGQL,
     FinishFocusedTaskGQL,
     RecordPomodoroGQL,
+    AssignedTaskGQL,
   ],
 })
 export class TasksModule {}

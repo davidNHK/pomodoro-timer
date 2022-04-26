@@ -34,6 +34,24 @@ export class TodoGQL extends Query<{ taskOnFocus: Task; todo: Task[] }> {
 @Injectable({
   providedIn: 'root',
 })
+export class AssignedTaskGQL extends Query<{
+  taskOnFocus: Task;
+  todo: Task[];
+}> {
+  override document = gql`
+    query assignedTask {
+      jiraAssignedTask {
+        id
+        key
+        summaryText
+      }
+    }
+  `;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class CreateTaskGQL extends Mutation {
   override document = gql`
     mutation createTask($data: TaskInput!) {
