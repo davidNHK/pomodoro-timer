@@ -1,6 +1,6 @@
 import convict from 'convict';
 
-import { AppEnvironment, AppMode } from './config.constants';
+import { AppEnvironment } from './config.constants';
 
 convict.addFormat({
   coerce(val: any): any {
@@ -13,6 +13,20 @@ convict.addFormat({
 });
 
 const configSchema = convict({
+  connector: {
+    atlassian: {
+      clientId: {
+        default: null,
+        env: 'CONNECTOR_ATLASSIAN_CLIENT_ID',
+        format: String,
+      },
+      clientSecret: {
+        default: null,
+        env: 'CONNECTOR_ATLASSIAN_CLIENT_SECRET',
+        format: String,
+      },
+    },
+  },
   env: {
     default: 'development',
     env: 'APP_ENV',
@@ -21,6 +35,7 @@ const configSchema = convict({
   frontend: {
     origin: {
       default: null,
+      env: 'FRONTEND_ORIGIN',
       format: String,
     },
   },
@@ -31,11 +46,6 @@ const configSchema = convict({
       format: String,
     },
   },
-  mode: {
-    default: 'http',
-    env: 'APP_MODE',
-    format: Object.values(AppMode),
-  },
   port: {
     default: 5333,
     env: 'PORT',
@@ -44,11 +54,7 @@ const configSchema = convict({
 });
 
 export function configuration() {
-  configSchema.load({
-    frontend: {
-      origin: 'http://localhost:4200',
-    },
-  });
+  configSchema.load({});
   configSchema.validate({
     allowed: 'strict',
   });
