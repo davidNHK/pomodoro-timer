@@ -54,6 +54,7 @@
     "graphql-tag": "2.12.6",
     "jest": "27.5.1",
     "jest-environment-node": "28.0.2",
+    "msw": "0.39.2",
     "supertest": "6.2.3",
     "ts-jest": "27.1.4",
     "ts-loader": "9.2.9",

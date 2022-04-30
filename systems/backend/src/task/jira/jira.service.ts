@@ -69,7 +69,7 @@ export class JiraService {
       );
   }
 
-  getCloudId$(userId: string) {
+  getCloudIds$(userId: string) {
     // https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/
 
     return this.httpRequest$(userId, {
@@ -80,7 +80,7 @@ export class JiraService {
 
   async getAssignedTask(userId: string) {
     const tasks = await lastValueFrom(
-      this.getCloudId$(userId).pipe(
+      this.getCloudIds$(userId).pipe(
         mergeMap(({ data }) => from(data as { id: string }[])),
         mergeMap(cloudId => {
           return this.httpRequest$(userId, {
