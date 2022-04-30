@@ -1,4 +1,4 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { rest } from 'msw';
 
 import { DefaultHandler } from './default.handler';
@@ -11,7 +11,7 @@ import type {
 } from './mock.interface';
 
 @Injectable()
-export class AtlassianRefreshTokenHandler implements Handler {
+export class AtlassianCurrentUserHandler implements Handler {
   constructor(@Optional() private defaultHandler?: DefaultHandler) {}
 
   resolve(req: MockedRequest, res: MockedResponse, ctx: MockContext) {
@@ -20,7 +20,7 @@ export class AtlassianRefreshTokenHandler implements Handler {
 
   static fromJestMock(
     mock: jest.MockedFunction<any>,
-  ): AtlassianRefreshTokenHandler {
+  ): AtlassianCurrentUserHandler {
     return {
       resolve: mock,
     };
@@ -28,19 +28,17 @@ export class AtlassianRefreshTokenHandler implements Handler {
 }
 
 @Injectable()
-export class AtlassianRefreshTokenMock implements Mock {
-  private logger = new Logger(AtlassianRefreshTokenMock.name);
-
+export class AtlassianCurrentUserMock implements Mock {
   constructor(
     @Optional()
-    private readonly atlassianRefreshTokenHandler: AtlassianRefreshTokenHandler,
+    private readonly atlassianRefreshTokenHandler: AtlassianCurrentUserHandler,
   ) {}
 
   get mock() {
     return (
       this.atlassianRefreshTokenHandler &&
-      rest.post(
-        'https://auth.atlassian.com/oauth/token',
+      rest.get(
+        'https://api.atlassian.com/me',
         this.atlassianRefreshTokenHandler.resolve,
       )
     );

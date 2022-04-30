@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import OAuth2Strategy from 'passport-oauth2';
@@ -12,6 +12,8 @@ import { SessionStore } from './session.store';
 
 @Injectable()
 export class AtlassianTokenService {
+  private logger = new Logger(AtlassianTokenService.name);
+
   constructor(
     private readonly httpService: HttpService,
     private readonly connectedProviderService: ConnectedProviderService,
@@ -45,24 +47,21 @@ export class AtlassianTokenService {
       this.configService.get('connector.atlassian.clientId'),
       this.configService.get('connector.atlassian.clientSecret'),
     ];
+
     return this.connectedProviderService
       .getUserConnectedCredential$(userId, UserProvider.ATLASSIAN)
       .pipe(
-        mergeMap(credential => {
-          return this.httpService.request<{
+        mergeMap(credential =>
+          this.httpService.post<{
             access_token: string;
             refresh_token: string;
-          }>({
-            data: {
-              client_id: clientId,
-              client_secret: clientSecret,
-              grant_type: 'refresh_token',
-              refresh_token: credential,
-            },
-            method: 'POST',
-            url: 'https://auth.atlassian.com/oauth/token',
-          });
-        }),
+          }>('https://auth.atlassian.com/oauth/token', {
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'refresh_token',
+            refresh_token: credential.refreshToken,
+          }),
+        ),
       )
       .pipe(
         mergeMap(resp =>

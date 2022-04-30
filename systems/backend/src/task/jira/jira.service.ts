@@ -11,7 +11,7 @@ import {
   of,
   throwError,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { AtlassianTokenService } from '../../auth/atlassian.strategy';
 import { UserProvider } from '../../user/connected-provider/connected-provider.model';
@@ -59,7 +59,6 @@ export class JiraService {
                 if (!isUnauthorized) {
                   return throwError(error);
                 }
-
                 return this.atlassianTokenService
                   .refreshAccessTokenForUser(userId)
                   .pipe(mergeMap(() => this.httpRequest$(userId, config)));
@@ -84,15 +83,17 @@ export class JiraService {
         mergeMap(({ data }) => from(data as { id: string }[])),
         mergeMap(cloudId => {
           return this.httpRequest$(userId, {
+            method: 'GET',
             params: {
               currentJQL: 'assignee=currentUser()',
             },
             url: `https://api.atlassian.com/ex/jira/${cloudId.id}/rest/api/2/issue/picker`,
           });
         }),
-        mergeMap(({ data }) => of(data.sections[0].issues)),
+        mergeMap(({ data }) => of(data.sections?.[0].issues)),
+        toArray(),
       ),
     );
-    return tasks;
+    return tasks.flat();
   }
 }
