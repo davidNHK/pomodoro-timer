@@ -11,19 +11,19 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthModule } from '../auth/auth.module';
 import { HomeComponent } from './home/home.component';
-import { ProtectedAppComponent } from './protected-app.component';
+import { ProtectedComponent } from './protected.component';
 import { TasksModule } from './tasks/tasks.module';
 
 const routes: Routes = [
   {
     children: [{ component: HomeComponent, path: '' }],
-    component: ProtectedAppComponent,
+    component: ProtectedComponent,
     path: '',
   },
 ];
 
 @NgModule({
-  declarations: [ProtectedAppComponent, HomeComponent],
+  declarations: [ProtectedComponent, HomeComponent],
   exports: [],
   imports: [
     CommonModule,
@@ -40,4 +40,4 @@ const routes: Routes = [
   ],
   providers: [],
 })
-export class ProtectedAppModule {}
+export class ProtectedModule {}
