@@ -43,6 +43,11 @@
       </button>
       <button mat-stroked-button (click)="toggleInputForm()">Cancel</button>
     </mat-card-actions>
+    <mat-card-footer>
+      <app-jira-assigned-task
+        (selectJiraTask)="selectJIRATask($event)"
+      ></app-jira-assigned-task>
+    </mat-card-footer>
   </mat-card>
 </form>
 

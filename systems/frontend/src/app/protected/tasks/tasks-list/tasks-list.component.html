@@ -5,22 +5,28 @@
 >
   Oops! You are so free now
 </h1>
-<h1
-  *ngIf="selectedTask !== null"
-  class="flex justify-center"
-  data-testid="selected-task"
->
-  #{{ (selectedTask?.completedPomodoro ?? 0) + 1 | number: '2.0' }}
-  {{ selectedTask?.title }}
-</h1>
-<mat-selection-list [multiple]="false" (selectionChange)="selectTask($event)">
-  <mat-list-option
-    *ngFor="let task of tasks; let index = index"
-    [selected]="task.id === selectedTask?.id"
-    [disabled]="isTimerRunning"
-    [value]="task"
-    [attr.data-testid]="'task-list-item-' + index"
+<section *ngIf="loading" class="flex items-center justify-center flex-col">
+  <mat-spinner></mat-spinner>
+  <p data-testid="loading-description">Fetching task....</p>
+</section>
+<section *ngIf="!loading">
+  <h1
+    *ngIf="selectedTask !== null"
+    class="flex justify-center"
+    data-testid="selected-task"
   >
-    {{ task.title }}
-  </mat-list-option>
-</mat-selection-list>
+    #{{ (selectedTask?.completedPomodoro ?? 0) + 1 | number: '2.0' }}
+    {{ selectedTask?.title }}
+  </h1>
+  <mat-selection-list [multiple]="false" (selectionChange)="selectTask($event)">
+    <mat-list-option
+      *ngFor="let task of tasks; let index = index"
+      [selected]="task.id === selectedTask?.id"
+      [disabled]="isTimerRunning"
+      [value]="task"
+      [attr.data-testid]="'task-list-item-' + index"
+    >
+      {{ task.title }}
+    </mat-list-option>
+  </mat-selection-list>
+</section>

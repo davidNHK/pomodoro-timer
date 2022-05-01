@@ -80,7 +80,9 @@ export class JiraService {
   async getAssignedTask(userId: string) {
     const tasks = await lastValueFrom(
       this.getCloudIds$(userId).pipe(
-        mergeMap(({ data }) => from(data as { id: string }[])),
+        mergeMap(({ data }) => {
+          return from(data as { id: string }[]);
+        }),
         mergeMap(cloudId => {
           return this.httpRequest$(userId, {
             method: 'GET',
@@ -90,7 +92,20 @@ export class JiraService {
             url: `https://api.atlassian.com/ex/jira/${cloudId.id}/rest/api/2/issue/picker`,
           });
         }),
-        mergeMap(({ data }) => of(data.sections?.[0].issues)),
+        mergeMap(({ data }) => {
+          return of(
+            Object.values(
+              Object.fromEntries(
+                data.sections
+                  ?.map(
+                    (section: { issues: { key: string }[] }) => section.issues,
+                  )
+                  .flat()
+                  .map((issue: { key: string }) => [issue.key, issue]),
+              ),
+            ),
+          );
+        }),
         toArray(),
       ),
     );

@@ -216,5 +216,59 @@ describe('JiraService', () => {
         { key: 'BAR-0002' },
       ]);
     });
+
+    it('should get assigned issue on multiple cloud id and deduplicated section issues', async () => {
+      const module = await context.moduleBuilder
+        .overrideProvider(AtlassianTokenAccessibleResourcesHandler)
+        .useValue(
+          AtlassianTokenAccessibleResourcesHandler.fromJestMock(
+            jest.fn().mockImplementation((_, res: any, ctx: any) => {
+              return res(
+                ctx.json([{ id: 'cloud-id-0001' }, { id: 'cloud-id-0002' }]),
+              );
+            }),
+          ),
+        )
+        .overrideProvider(AtlassianAssignedIssuesHandler)
+        .useValue(
+          AtlassianAssignedIssuesHandler.fromJestMock(
+            jest.fn().mockImplementation((req: any, res: any, ctx: any) => {
+              const { cloudId } = req.params;
+              if (cloudId === 'cloud-id-0001') {
+                return res(
+                  ctx.json({
+                    sections: [
+                      { issues: [{ key: 'FOO-0001' }, { key: 'FOO-0002' }] },
+                      { issues: [{ key: 'FOO-0001' }, { key: 'FOO-0002' }] },
+                    ],
+                  }),
+                );
+              }
+              if (cloudId === 'cloud-id-0002') {
+                return res(
+                  ctx.json({
+                    sections: [
+                      { issues: [{ key: 'BAR-0001' }, { key: 'BAR-0002' }] },
+                      { issues: [{ key: 'BAR-0001' }, { key: 'BAR-0002' }] },
+                    ],
+                  }),
+                );
+              }
+              return res(ctx.json({}));
+            }),
+          ),
+        )
+        .compile();
+      await setupTest(module);
+      const service = module.get<JiraService>(JiraService);
+
+      const body = await service.getAssignedTask('testId');
+      expect(body).toStrictEqual([
+        { key: 'FOO-0001' },
+        { key: 'FOO-0002' },
+        { key: 'BAR-0001' },
+        { key: 'BAR-0002' },
+      ]);
+    });
   });
 });

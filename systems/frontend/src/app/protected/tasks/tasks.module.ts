@@ -20,6 +20,7 @@ import {
   SetUserFocusTaskGQL,
   TodoGQL,
 } from './graphql';
+import { JiraAssignedTaskListComponent } from './jira-assigned-task-list/jira-assigned-task-list.component';
 import { TaskTimerComponent } from './task-timer/task-timer.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 
@@ -30,6 +31,7 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     TaskTimerComponent,
     CountdownComponent,
     FormatMsPipe,
+    JiraAssignedTaskListComponent,
   ],
   exports: [TasksListComponent, AddTaskComponent, TaskTimerComponent],
   imports: [
