@@ -2,14 +2,14 @@ import { RouterModule } from '@angular/router';
 import { configureTestingModuleForComponent } from '@app-test-helper/configure-testing-module';
 
 import { AuthModule } from '../auth/auth.module';
-import { ProtectedAppComponent } from './protected-app.component';
+import { ProtectedComponent } from './protected.component';
 
 describe('ProtectedAppComponent', () => {
   it('should have <router-outlet> for contain children routes', async () => {
     const { fixture } = await configureTestingModuleForComponent(
-      ProtectedAppComponent,
+      ProtectedComponent,
       {
-        declarations: [ProtectedAppComponent],
+        declarations: [ProtectedComponent],
         imports: [RouterModule.forRoot([]), AuthModule],
       },
     );

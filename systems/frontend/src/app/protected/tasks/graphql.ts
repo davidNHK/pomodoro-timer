@@ -31,6 +31,28 @@ export class TodoGQL extends Query<{ taskOnFocus: Task; todo: Task[] }> {
   `;
 }
 
+export interface AssignedTask {
+  key: string;
+  summaryText: string;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssignedTaskGQL extends Query<{
+  jiraAssignedTask: AssignedTask[];
+}> {
+  override document = gql`
+    query assignedTask {
+      jiraAssignedTask {
+        id
+        key
+        summaryText
+      }
+    }
+  `;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -51,6 +73,7 @@ export class CreateTaskGQL extends Mutation {
   override mutate<V = any>(variables: V, options?: MutationOptionsAlone) {
     return super.mutate(variables, {
       ...options,
+      awaitRefetchQueries: true,
       refetchQueries: [
         {
           query: this.todoGQL.document,

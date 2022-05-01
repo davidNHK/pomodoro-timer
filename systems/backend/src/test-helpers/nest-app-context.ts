@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach } from '@jest/globals';
+import { afterAll, afterEach, beforeAll, beforeEach } from '@jest/globals';
 import type { INestApplication } from '@nestjs/common';
 import type { ModuleMetadata } from '@nestjs/common/interfaces/modules/module-metadata.interface';
 import { ConfigService } from '@nestjs/config';
@@ -7,12 +7,14 @@ import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
 import { AppModule } from '../app.module';
 import { setupApp } from '../bootstrap';
+import { NestLogger } from '../logging/nest-logger';
 
 interface NestServerContext {
   app: INestApplication;
 }
 
 interface NestModuleBuilderContext {
+  module: TestingModule;
   moduleBuilder: TestingModuleBuilder;
 }
 
@@ -77,7 +79,20 @@ export function withNestModuleBuilderContext(
   const context: NestModuleBuilderContext = {};
   beforeEach(async () => {
     const moduleBuilder = await createTestingModuleBuilder(moduleMetadata);
+    const orgCompile = moduleBuilder.compile.bind(moduleBuilder);
+    moduleBuilder.compile = async () => {
+      const module = await orgCompile();
+      const logger = module.get(NestLogger);
+      module.useLogger(logger);
+      await module.init();
+      await module.enableShutdownHooks();
+      context.module = module;
+      return module;
+    };
     Object.assign(context, { moduleBuilder });
+  });
+  afterEach(async () => {
+    await context?.module?.close();
   });
   return context;
 }

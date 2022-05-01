@@ -12,6 +12,8 @@ import { Task, TodoGQL } from '../graphql';
 export class TasksListComponent implements OnInit {
   tasks: Task[] = [];
 
+  loading = false;
+
   constructor(
     private todoGQL: TodoGQL,
     private countDownService: CountdownService,
@@ -22,9 +24,13 @@ export class TasksListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.todoGQL.watch().valueChanges.subscribe(({ data }) => {
-      this.tasks = data.todo;
-      this.selectedTask = data.taskOnFocus;
+    this.loading = true;
+    this.todoGQL.watch().valueChanges.subscribe(({ data, loading }) => {
+      this.loading = loading;
+      if (data) {
+        this.tasks = data?.todo ?? [];
+        this.selectedTask = data?.taskOnFocus;
+      }
     });
   }
 

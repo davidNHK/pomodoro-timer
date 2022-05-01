@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { from, map } from 'rxjs';
 
+import { ErrorCode } from '../../error-hanlding/error-code.constant';
+import { UnauthorizedException } from '../../error-hanlding/unauthorized.exception';
 import { UserService } from '../user.service';
 import type {
   ConnectedProvider,
@@ -45,6 +48,25 @@ export class ConnectedProviderService {
     return connector
       ? this.connectedCredential[userId][connector.userId]
       : null;
+  }
+
+  getUserConnectedCredential$(userId: string, provider: UserProvider) {
+    return from(this.userProvider(userId, provider)).pipe(
+      map(connector => {
+        if (!connector)
+          throw new UnauthorizedException({
+            code: ErrorCode.ConnectedProviderCredentialError,
+            errors: [{ title: 'Connector not found' }],
+          });
+        const credential = this.connectedCredential[userId][connector.userId];
+        if (!credential)
+          throw new UnauthorizedException({
+            code: ErrorCode.ConnectedProviderCredentialError,
+            errors: [{ title: 'Credential not found' }],
+          });
+        return credential;
+      }),
+    );
   }
 
   async connectProviderToUser({

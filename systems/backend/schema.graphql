@@ -5,6 +5,15 @@
 """Date custom scalar type"""
 scalar Date
 
+type JiraAssignedTask {
+  id: Int!
+  img: String!
+  key: String!
+  keyHtml: String!
+  summary: String!
+  summaryText: String!
+}
+
 type Mutation {
   createTask(data: TaskInput!): Task!
   finishFocusingTask(taskId: ID!): Task!
@@ -21,6 +30,7 @@ type Pomodoro {
 }
 
 type Query {
+  jiraAssignedTask: [JiraAssignedTask!]!
   taskOnFocus: Task
   tasks(filter: QueryTasksFilterInput): [Task!]!
   todo: [Task!]!
