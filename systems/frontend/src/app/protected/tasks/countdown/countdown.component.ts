@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import type { Subscription } from 'rxjs';
 
 import { CountdownService } from '../countdown.service';
@@ -17,6 +25,9 @@ export enum CountdownType {
 export class CountdownComponent implements OnInit {
   @Input()
   declare type: CountdownType;
+
+  @ViewChild('videoElement')
+  declare videoElement: ElementRef<HTMLVideoElement>;
 
   @Output()
   countdownComplete: EventEmitter<{
@@ -54,6 +65,19 @@ export class CountdownComponent implements OnInit {
     }
   }
 
+  get countdownVideoUrl(): string | undefined {
+    switch (this.type) {
+      case CountdownType.POMODORO:
+        return '/assets/25-minutes.mp4';
+      case CountdownType.SHORT_BREAK:
+        return '/assets/5-minutes.mp4';
+      case CountdownType.LONG_BREAK:
+        return '/assets/15-minutes.mp4';
+      default:
+        return undefined;
+    }
+  }
+
   ngOnInit(): void {
     this.countdownMs = this.getCountdownMs();
     this.runDown = this.countdownMs;
@@ -71,19 +95,24 @@ export class CountdownComponent implements OnInit {
     return this.countDownService.canStart();
   }
 
-  private reset() {
+  private async reset() {
+    const videoElement = this.videoElement.nativeElement;
+    videoElement.currentTime = 0;
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture();
+    }
     this.countDownService.stop();
     this.runDown = this.countdownMs;
   }
 
-  private complete() {
-    this.reset();
+  private async complete() {
+    await this.reset();
     this.countdownComplete.emit({
       type: this.type,
     });
   }
 
-  start(): void {
+  async start(): Promise<void> {
     if (this.type === CountdownType.POMODORO) {
       this.timerStart.emit({
         type: this.type,
@@ -97,15 +126,19 @@ export class CountdownComponent implements OnInit {
           this.runDown = this.countdownMs - ms;
         },
       });
+    const videoElement = this.videoElement.nativeElement;
+    videoElement.currentTime = 0;
+    await videoElement.play();
+    await videoElement.requestPictureInPicture();
   }
 
-  stop(): void {
+  async stop(): Promise<void> {
     this.countdownSubscription?.unsubscribe();
-    this.reset();
+    await this.reset();
   }
 
-  finish(): void {
-    this.reset();
+  async finish() {
+    await this.reset();
     this.taskFinish.emit({ type: this.type });
   }
 }
