@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {
   ApolloClientOptions,
@@ -24,13 +25,14 @@ const refreshExpiredAccessToken = (authService: AuthService, router: Router) =>
       ),
     );
     if (hasAccessTokenExpired && !authService.refreshToken) {
+      authService.logout();
       router.navigate(['/auth/login']);
       return undefined;
     }
     if (!hasAccessTokenExpired || !authService.refreshToken) return undefined;
     return authService.refreshAccessToken(authService.refreshToken).pipe(
-      mergeMap(({ error }) => {
-        if (error) {
+      mergeMap(({ errors }) => {
+        if (errors) {
           authService.logout();
           router.navigate(['/auth/login']);
           return of(undefined);
@@ -59,21 +61,23 @@ const setAccessToken = (authService: AuthService) =>
     };
   });
 
+const errorMessageSnack = (snackBar: MatSnackBar) => {
+  return onError(({ graphQLErrors, networkError }) => {
+    const errors: string[] = networkError?.message
+      ? [networkError?.message]
+      : [];
+    if (graphQLErrors) {
+      graphQLErrors.forEach(({ extensions }) => {
+        errors.push(extensions['code'] as string);
+      });
+    }
+    snackBar.open(errors.join('\n'), 'Dismiss', {
+      duration: 5000,
+    });
+  });
+};
+
 const uri = `${environment.apiUrl}/graphql`;
-export function createApollo(
-  httpLink: HttpLink,
-  authService: AuthService,
-  router: Router,
-): ApolloClientOptions<any> {
-  return {
-    cache: new InMemoryCache(),
-    link: ApolloLink.from([
-      setAccessToken(authService),
-      refreshExpiredAccessToken(authService, router),
-      httpLink.create({ uri }),
-    ]),
-  };
-}
 
 @NgModule({
   exports: [ApolloModule],
@@ -81,13 +85,29 @@ export function createApollo(
     {
       provide: APOLLO_FLAGS,
       useValue: {
+        useInitialLoading: true, // enable it here
         useMutationLoading: true, // enable it here
       },
     },
     {
-      deps: [HttpLink, AuthService, Router],
+      deps: [HttpLink, AuthService, Router, MatSnackBar],
       provide: APOLLO_OPTIONS,
-      useFactory: createApollo,
+      useFactory: (
+        httpLink: HttpLink,
+        authService: AuthService,
+        router: Router,
+        snackBar: MatSnackBar,
+      ): ApolloClientOptions<any> => {
+        return {
+          cache: new InMemoryCache(),
+          link: ApolloLink.from([
+            setAccessToken(authService),
+            errorMessageSnack(snackBar),
+            refreshExpiredAccessToken(authService, router),
+            httpLink.create({ uri }),
+          ]),
+        };
+      },
     },
   ],
 })

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { CountdownService } from '../countdown.service';
-import { CreateTaskGQL } from '../graphql';
+import { AssignedTask, CreateTaskGQL } from '../graphql';
 
 @Component({
   selector: 'app-add-task',
@@ -44,12 +44,6 @@ export class AddTaskComponent implements OnInit {
           this.snackBar.open('Task created', '', { duration: 5000 });
           this.toggleInputForm();
         }
-        if (errors)
-          this.snackBar.open(
-            'Something went wrong, please try again later',
-            '',
-            { duration: 2000 },
-          );
       });
   }
 
@@ -62,5 +56,9 @@ export class AddTaskComponent implements OnInit {
       notes: [''],
       title: ['', Validators.required],
     });
+  }
+
+  selectJIRATask(task: AssignedTask) {
+    this.form.patchValue({ title: `${task.key} - ${task.summaryText}` });
   }
 }

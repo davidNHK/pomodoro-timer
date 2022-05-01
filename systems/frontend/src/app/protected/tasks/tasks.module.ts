@@ -13,12 +13,14 @@ import { AddTaskComponent } from './add-task/add-task.component';
 import { CountdownComponent } from './countdown/countdown.component';
 import { FormatMsPipe } from './format-ms.pipe';
 import {
+  AssignedTaskGQL,
   CreateTaskGQL,
   FinishFocusedTaskGQL,
   RecordPomodoroGQL,
   SetUserFocusTaskGQL,
   TodoGQL,
 } from './graphql';
+import { JiraAssignedTaskListComponent } from './jira-assigned-task-list/jira-assigned-task-list.component';
 import { TaskTimerComponent } from './task-timer/task-timer.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 
@@ -29,6 +31,7 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     TaskTimerComponent,
     CountdownComponent,
     FormatMsPipe,
+    JiraAssignedTaskListComponent,
   ],
   exports: [TasksListComponent, AddTaskComponent, TaskTimerComponent],
   imports: [
@@ -49,6 +52,7 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
     SetUserFocusTaskGQL,
     FinishFocusedTaskGQL,
     RecordPomodoroGQL,
+    AssignedTaskGQL,
   ],
 })
 export class TasksModule {}

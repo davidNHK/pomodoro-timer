@@ -69,7 +69,7 @@ export class AuthService {
           throw error;
         }),
         map(resp => {
-          if (resp.error) return resp;
+          if (resp.errors) return resp;
           this.accessToken = resp.accessToken;
           this.refreshToken = resp.refreshToken;
           return resp;

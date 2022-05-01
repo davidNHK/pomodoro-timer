@@ -1,0 +1,20 @@
+<h1>JIRA assigned tasks</h1>
+
+<section *ngIf="loading" class="flex items-center justify-center flex-col">
+  <mat-spinner></mat-spinner>
+  <p data-testid="loading-description">Fetching JIRA assigned tasks....</p>
+</section>
+
+<section *ngIf="!loading">
+  <mat-selection-list [multiple]="false" (selectionChange)="selectTask($event)">
+    <mat-list-option
+      *ngFor="let task of jiraAssignedTasks; let index = index"
+      [selected]="task.key === selectedJiraTask?.key"
+      [value]="task"
+      [attr.data-testid]="'jira-assigned-task-list-item-' + index"
+    >
+      <h2 mat-line>{{ task.key | uppercase }}</h2>
+      <h3 mat-line>{{ task.summaryText }}</h3>
+    </mat-list-option>
+  </mat-selection-list>
+</section>

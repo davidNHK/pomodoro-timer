@@ -9,9 +9,7 @@ const routes: Routes = [
   },
   {
     loadChildren: () =>
-      import('./protected-app/protected-app.module').then(
-        m => m.ProtectedAppModule,
-      ),
+      import('./protected/protected.module').then(m => m.ProtectedModule),
     path: 'app',
   },
   { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
