@@ -54,11 +54,7 @@ const configSchema = convict({
 });
 
 export function configuration() {
-  const appEnv = process.env['APP_ENV'];
-  const isCI = process.env['CI'] === 'true';
-  configSchema.load({
-    env: isCI ? AppEnvironment.CI_TEST : appEnv,
-  });
+  configSchema.load({});
   configSchema.validate({
     allowed: 'strict',
   });
