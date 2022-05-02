@@ -17,6 +17,7 @@ import { RequestStartTimeMiddleware } from './common/request-start-time.middlewa
 import { AppEnvironment } from './config/config.constants';
 import { configuration } from './config/configuration';
 import { getEnvFilePath } from './config/getEnvFilePath';
+import { DatabaseModule } from './database/database.module';
 import { BadRequestException } from './error-hanlding/bad-request.exception';
 import { ErrorCode } from './error-hanlding/error-code.constant';
 import { GeneralExceptionFilter } from './error-hanlding/general-exception.filter';
@@ -73,6 +74,7 @@ import { UserModule } from './user/user.module';
     HealthModule,
     AuthModule,
     UserModule,
+    DatabaseModule.forRoot(),
   ],
   providers: [
     {

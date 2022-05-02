@@ -1,0 +1,8 @@
+services:
+  firestore:
+    build:
+      context: .
+      dockerfile: Dockerfile.firestore
+    ports:
+      - '8080:8080'
+version: '3.7'

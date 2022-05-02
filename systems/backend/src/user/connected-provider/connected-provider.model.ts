@@ -16,6 +16,18 @@ registerEnumType(UserProvider, {
   name: 'UserProvider',
 });
 
+export class ConnectedCredential {
+  declare id: string;
+
+  userId!: string;
+
+  connectedProviderId!: string;
+
+  accessToken!: string;
+
+  refreshToken!: string;
+}
+
 @ObjectType()
 export class ConnectedProvider {
   @Field(() => ID)

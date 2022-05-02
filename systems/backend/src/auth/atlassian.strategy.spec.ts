@@ -2,18 +2,15 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import type { TestingModule } from '@nestjs/testing';
-import axios from 'axios';
 import { lastValueFrom } from 'rxjs';
 
-import {
-  AtlassianCurrentUserHandler,
-  AtlassianRefreshTokenHandler,
-} from '../test-helpers/mock-http';
+import { AtlassianRefreshTokenHandler } from '../test-helpers/mock-http';
 import { MockHttpModule } from '../test-helpers/mock-http/mock-http.module';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
 import { UserProvider } from '../user/connected-provider/connected-provider.model';
 import { ConnectedProviderService } from '../user/connected-provider/connected-provider.service';
 import { UserModule } from '../user/user.module';
+import { UserService } from '../user/user.service';
 import { AtlassianTokenService } from './atlassian.strategy';
 
 const context = withNestModuleBuilderContext({
@@ -26,42 +23,36 @@ describe('AtlassianTokenService', () => {
     const connectedProviderService = module.get<ConnectedProviderService>(
       ConnectedProviderService,
     );
-    await connectedProviderService.createConnectedProvider('testId', {
-      provider: UserProvider.ATLASSIAN,
-      userAvatar: '',
-      userEmail: '',
-      userId: 'testId',
-      userName: '',
+    const userService = module.get<UserService>(UserService);
+    const user = await userService.createUser({
+      email: 'test@gmail.com',
+      name: 'test',
     });
+    const connectedProvider =
+      await connectedProviderService.createConnectedProvider(user.id, {
+        provider: UserProvider.ATLASSIAN,
+        userAvatar: '',
+        userEmail: '',
+        userId: 'testId',
+        userName: '',
+      });
 
     await connectedProviderService.saveUserConnectedCredential(
-      'testId',
-      'testId',
+      user.id,
+      connectedProvider.id,
       {
         accessToken: 'testAccessToken',
         refreshToken: 'testRefreshToken',
       },
     );
+    return {
+      connectedProvider,
+      user,
+    };
   }
 
-  it('should be defined', async () => {
+  it('should set new access token to provider', async () => {
     const module = await context.moduleBuilder
-      .overrideProvider(AtlassianCurrentUserHandler)
-      .useValue(
-        AtlassianCurrentUserHandler.fromJestMock(
-          jest.fn().mockImplementation((_, res: any, ctx: any) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                account_id: 'testKey',
-                email: 'testEmail',
-                name: 'testName',
-                picture: 'testDisplayName',
-              }),
-            );
-          }),
-        ),
-      )
       .overrideProvider(AtlassianRefreshTokenHandler)
       .useValue(
         AtlassianRefreshTokenHandler.fromJestMock(
@@ -77,26 +68,15 @@ describe('AtlassianTokenService', () => {
         ),
       )
       .compile();
-    await setupTest(module);
-    const res = await axios.post('https://auth.atlassian.com/oauth/token');
-    expect(res.data).toEqual({
-      access_token: 'newAccessToken',
-      refresh_token: 'newRefreshToken',
-    });
+    const { user } = await setupTest(module);
+
     const service = module.get<AtlassianTokenService>(AtlassianTokenService);
     const lastValue = await lastValueFrom(
-      service.refreshAccessTokenForUser('testId'),
+      service.refreshAccessTokenForUser(user.id),
     );
     expect(lastValue).toStrictEqual({
       access_token: 'newAccessToken',
       refresh_token: 'newRefreshToken',
-      user: {
-        provider: 'atlassian',
-        userAvatar: 'testDisplayName',
-        userEmail: 'testEmail',
-        userId: 'testKey',
-        userName: 'testName',
-      },
     });
-  }, 60000);
+  });
 });

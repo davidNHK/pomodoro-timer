@@ -1,64 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { from, map } from 'rxjs';
+import { from, map, mergeMap } from 'rxjs';
 
 import { ErrorCode } from '../../error-hanlding/error-code.constant';
 import { UnauthorizedException } from '../../error-hanlding/unauthorized.exception';
 import { UserService } from '../user.service';
+import { ConnectedCredentialRepository } from './connected-credential.repository';
 import type {
   ConnectedProvider,
   ConnectedProviderInput,
   UserProvider,
 } from './connected-provider.model';
+import { ConnectedProviderRepository } from './connected-provider.repository';
 
 @Injectable()
 export class ConnectedProviderService {
-  connectedCredential: {
-    [userId: string]: {
-      [providerUserId: string]: {
-        accessToken: string;
-        refreshToken: string;
-      };
-    };
-  } = {};
+  private logger = new Logger(ConnectedProviderService.name);
 
-  private connectedProvider: {
-    [providerUserId: string]: ConnectedProvider;
-  } = {};
+  constructor(
+    private userService: UserService,
+    private connectedProviderRepository: ConnectedProviderRepository,
+    private connectedCredentialRepository: ConnectedCredentialRepository,
+  ) {}
 
-  constructor(private userService: UserService) {}
-
-  saveUserConnectedCredential(
+  async saveUserConnectedCredential(
     userId: string,
-    providerUserId: string,
+    connectedProviderId: string,
     {
       accessToken,
       refreshToken,
     }: { accessToken: string; refreshToken: string },
   ) {
-    this.connectedCredential[userId] = this.connectedCredential[userId] || {};
-    this.connectedCredential[userId][providerUserId] = {
+    return this.connectedCredentialRepository.create({
+      accessToken,
+      connectedProviderId: connectedProviderId,
+      id: randomUUID(),
+      refreshToken,
+      userId,
+    });
+  }
+
+  async updateUserConnectedCredential(
+    id: string,
+    {
       accessToken,
       refreshToken,
-    };
+    }: { accessToken: string; refreshToken: string },
+  ) {
+    return this.connectedCredentialRepository.update(id, {
+      accessToken,
+      refreshToken,
+    });
   }
 
   async getUserConnectedCredential(userId: string, provider: UserProvider) {
     const connector = await this.userProvider(userId, provider);
-    return connector
-      ? this.connectedCredential[userId][connector.userId]
-      : null;
+    if (!connector) {
+      return null;
+    }
+    return this.connectedCredentialRepository.findOne({
+      connectedProviderId: connector.id,
+      userId: userId,
+    });
   }
 
   getUserConnectedCredential$(userId: string, provider: UserProvider) {
     return from(this.userProvider(userId, provider)).pipe(
-      map(connector => {
+      mergeMap(connector => {
         if (!connector)
           throw new UnauthorizedException({
             code: ErrorCode.ConnectedProviderCredentialError,
             errors: [{ title: 'Connector not found' }],
           });
-        const credential = this.connectedCredential[userId][connector.userId];
+        return from(
+          this.connectedCredentialRepository.findOne({
+            connectedProviderId: connector.id,
+            userId: userId,
+          }),
+        );
+      }),
+      map(credential => {
         if (!credential)
           throw new UnauthorizedException({
             code: ErrorCode.ConnectedProviderCredentialError,
@@ -78,17 +99,19 @@ export class ConnectedProviderService {
   }) {
     let userId = connectUserId;
     const existingProviderConnectedTo = await this.providerConnectedTo(
+      connectProvider.provider,
       connectProvider.userId,
     );
     if (!userId) {
       if (existingProviderConnectedTo) {
         userId = existingProviderConnectedTo;
       } else {
-        userId = await this.userService.createUser({
+        const user = await this.userService.createUser({
           avatar: connectProvider.userAvatar,
           email: connectProvider.userEmail,
           name: connectProvider.userName,
         });
+        userId = user.id;
       }
     }
 
@@ -97,7 +120,7 @@ export class ConnectedProviderService {
       await this.createConnectedProvider(userId, connectProvider);
     }
 
-    return this.userService.getUser(userId);
+    return (await this.userService.getUser(userId))!;
   }
 
   async createConnectedProvider(
@@ -110,32 +133,39 @@ export class ConnectedProviderService {
       connectedToUserId: userId,
       id: randomUUID(),
     };
-    this.connectedProvider[connectedProvider.userId] = record;
+    await this.connectedProviderRepository.create(record);
     return record;
   }
 
   async userConnectedProviders(userId: string): Promise<ConnectedProvider[]> {
-    return Object.values(this.connectedProvider).filter(
-      connectedProvider => connectedProvider.connectedToUserId === userId,
-    );
+    return this.connectedProviderRepository.findAll({
+      connectedToUserId: userId,
+    });
   }
 
   async userProvider(
     userId: string,
     provider: UserProvider,
-  ): Promise<ConnectedProvider | undefined> {
-    return Object.values(this.connectedProvider).find(
-      connectedProvider =>
-        connectedProvider.connectedToUserId === userId &&
-        connectedProvider.provider === provider,
-    );
+  ): Promise<ConnectedProvider | null> {
+    return this.connectedProviderRepository.findOne({
+      connectedToUserId: userId,
+      provider,
+    });
   }
 
-  async providerConnectedTo(providerUserId: string) {
-    return this.connectedProvider?.[providerUserId]?.connectedToUserId;
+  async providerConnectedTo(provider: UserProvider, providerUserId: string) {
+    return (
+      await this.connectedProviderRepository.findOne({
+        provider: provider,
+        userId: providerUserId,
+      })
+    )?.connectedToUserId;
   }
 
-  async getConnectedProvider(providerUserId: string) {
-    return this.connectedProvider[providerUserId];
+  async getConnectedProvider(provider: UserProvider, providerUserId: string) {
+    return this.connectedProviderRepository.findOne({
+      provider: provider,
+      userId: providerUserId,
+    });
   }
 }

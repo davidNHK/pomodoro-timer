@@ -2,6 +2,7 @@ import { Controller, Get, Redirect, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 
+import { UserProvider } from '../user/connected-provider/connected-provider.model';
 import { ConnectedProviderService } from '../user/connected-provider/connected-provider.service';
 import { AtlassianAuthGuard } from './atlassian-auth.guard';
 import { AuthService } from './auth.service';
@@ -31,9 +32,13 @@ export class AtlassianController {
         connectProvider: user,
         connectUserId: authInfo?.state?.currentUserId,
       });
-    await this.connectedProviderService.saveUserConnectedCredential(
-      userConnectedTo.id,
+    const provider = await this.connectedProviderService.getConnectedProvider(
+      UserProvider.ATLASSIAN,
       user.userId,
+    );
+    await this.connectedProviderService.saveUserConnectedCredential(
+      user.userId,
+      provider!.id,
       authInfo,
     );
     const code = await this.authService.signTokenExchangeCode(

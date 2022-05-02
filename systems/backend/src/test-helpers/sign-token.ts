@@ -11,11 +11,11 @@ export async function signToken(
 ) {
   const authService = module.get<AuthService>(AuthService);
   const userService = module.get<UserService>(UserService);
-  const userId = await userService.createUser({
+  const user = await userService.createUser({
     email: 'test@gmail.com',
     name: 'test',
   });
-  const code = await authService.signTokenExchangeCode(userId);
+  const code = await authService.signTokenExchangeCode(user.id);
   const { accessToken } = await authService.exchangeTokenFromCode(
     code,
     signTokenOptions,

@@ -109,6 +109,6 @@ export class JiraService {
         toArray(),
       ),
     );
-    return tasks.flat();
+    return tasks.flat().sort((a, b) => a.key.localeCompare(b.key));
   }
 }
