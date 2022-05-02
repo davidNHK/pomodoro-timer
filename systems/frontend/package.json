@@ -32,7 +32,7 @@
     "@busybox/tsconfig": "1.7.0",
     "@types/jasmine": "4.0.3",
     "@types/node": "17.0.30",
-    "autoprefixer": "10.4.5",
+    "autoprefixer": "10.4.6",
     "eslint": "8.14.0",
     "jasmine-core": "4.1.0",
     "karma": "6.3.19",
