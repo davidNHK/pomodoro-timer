@@ -13,7 +13,7 @@ task I need to do
 - Get all name with filter and pagination supported
 - Get game by id
 
-## Decision Drivers <!-- optional -->
+## Decision Drivers
 
 - DX - do i easy to integrate and will boots my productivity?
 - do i family enough on such protocol,

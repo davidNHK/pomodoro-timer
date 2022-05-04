@@ -9,14 +9,6 @@ export class SessionStore {
 
   constructor(private connection: ConnectionProvider) {}
 
-  memoryStore: {
-    [stateId: string]: {
-      handle: string;
-      meta: unknown;
-      state: Record<string, any>;
-    };
-  } = {};
-
   async store(
     _req: unknown,
     state: any,
@@ -25,10 +17,13 @@ export class SessionStore {
   ) {
     const stateId = randomUUID();
     try {
-      await this.connection.collection('sessions').doc(stateId).set({
-        meta,
-        state,
-      });
+      await this.connection
+        .collection('sessions')
+        .doc(stateId)
+        .set({
+          meta: meta ?? {},
+          state: state ?? {},
+        });
       return callback(null, stateId);
     } catch (err) {
       return callback(err);

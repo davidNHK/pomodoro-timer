@@ -59,6 +59,6 @@ export class AddTaskComponent implements OnInit {
   }
 
   selectJIRATask(task: AssignedTask) {
-    this.form.patchValue({ title: `${task.key} - ${task.summaryText}` });
+    this.form.patchValue({ title: task.key });
   }
 }

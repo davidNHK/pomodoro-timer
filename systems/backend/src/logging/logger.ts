@@ -23,7 +23,14 @@ export class Logger {
       format: format.combine(
         format.timestamp(),
         ...(isDev
-          ? [format.prettyPrint({ colorize: true, depth: 3 })]
+          ? [
+              format((info: any) => {
+                return info.context === 'GeneralLoggingInterceptor'
+                  ? false
+                  : info;
+              })(),
+              format.prettyPrint({ colorize: true, depth: 4 }),
+            ]
           : [format.json()]),
       ),
       level: isDev ? Level.debug : Level.info,

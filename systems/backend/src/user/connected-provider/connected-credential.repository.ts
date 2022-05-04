@@ -13,13 +13,14 @@ type FindOneParams = {
 export class ConnectedCredentialRepository {
   private logger = new Logger(ConnectedCredentialRepository.name);
 
-  constructor(private db: ConnectionProvider) {}
+  constructor(private connection: ConnectionProvider) {}
+
+  get collection() {
+    return this.connection.collection('connected_credentials');
+  }
 
   async create(connectedCredential: ConnectedCredential) {
-    await this.db
-      .collection('connected-credentials')
-      .doc(connectedCredential.id)
-      .set(connectedCredential);
+    await this.collection.doc(connectedCredential.id).set(connectedCredential);
   }
 
   async update(
@@ -29,10 +30,7 @@ export class ConnectedCredentialRepository {
       'accessToken' | 'refreshToken'
     >,
   ) {
-    await this.db
-      .collection('connected-credentials')
-      .doc(id)
-      .update(connectedCredential);
+    await this.collection.doc(id).update(connectedCredential);
   }
 
   async exist(params: FindOneParams) {
@@ -44,9 +42,7 @@ export class ConnectedCredentialRepository {
       ['connectedProviderId', '==', connectedProviderId],
       ['userId', '==', userId],
     ];
-    let connectedCredentialsRef: any = await this.db.collection(
-      'connected-credentials',
-    );
+    let connectedCredentialsRef: any = this.collection;
     query.forEach(([field, operator, value]) => {
       if (!value) return;
       connectedCredentialsRef = connectedCredentialsRef.where(
