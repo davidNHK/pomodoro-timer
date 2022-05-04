@@ -19,7 +19,6 @@ type Mutation {
   finishFocusingTask(taskId: ID!): Task!
   focusOnTask(taskId: ID!): Task!
   recordPomodoro(taskId: ID!): Pomodoro!
-  testMutation(data: TestInput!): TestModel!
 }
 
 type Pomodoro {
@@ -34,8 +33,6 @@ type Query {
   jiraAssignedTask: [JiraAssignedTask!]!
   taskOnFocus: Task
   tasks(filter: QueryTasksFilterInput): [Task!]!
-  testQuery: TestModel!
-  testQueryWithApolloError: TestModel!
   todo: [Task!]!
 }
 
@@ -64,12 +61,4 @@ enum TaskStatus {
   DONE
   PENDING
   STARTED
-}
-
-input TestInput {
-  id: ID!
-}
-
-type TestModel {
-  id: ID!
 }

@@ -37,7 +37,7 @@ export class AtlassianController {
       user.userId,
     );
     await this.connectedProviderService.saveUserConnectedCredential(
-      user.userId,
+      userConnectedTo.id,
       provider!.id,
       authInfo,
     );

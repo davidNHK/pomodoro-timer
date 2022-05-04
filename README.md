@@ -1,8 +1,4 @@
-# Code Challenge
-
-![Working screenshot](./docs/working-screenshot.png)
-
-![Monthly Budget reference](./docs/aws-usd-budget.png)
+# Productivity Apps
 
 The easy way to review would be following [Development Section](#development)
 and read the [Code Review Section](#code-review)
