@@ -5,24 +5,17 @@ import { randomUUID } from 'crypto';
 import { ErrorCode } from '../error-hanlding/error-code.constant';
 import { UnauthorizedException } from '../error-hanlding/unauthorized.exception';
 import { UserService } from '../user/user.service';
+import { RefreshTokenRepository } from './refresh-token.repository';
+import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
 import type { TokenUserPayload } from './token-user-payload';
 
 @Injectable()
 export class AuthService {
-  private tokenExchangeCodes: {
-    [code: string]: {
-      expires: number;
-      userId: string;
-    };
-  } = {};
-
-  private userRefreshTokens: {
-    [userId: string]: string;
-  } = {};
-
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
+    private tokenExchangeCodeRepository: TokenExchangeCodeRepository,
+    private refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   randomId() {
@@ -32,12 +25,13 @@ export class AuthService {
   async signTokenExchangeCode(userId: string) {
     const code = this.randomId();
     const expires = Date.now() + 1000 * 60 * 5; // 5 minute
-    this.tokenExchangeCodes[code] = { expires, userId };
+    await this.tokenExchangeCodeRepository.create(code, { expires, userId });
     return code;
   }
 
   async exchangeTokenFromCode(code: string, signTokenOptions?: JwtSignOptions) {
-    const { expires, userId } = this.tokenExchangeCodes[code] ?? {};
+    const { expires, userId } =
+      (await this.tokenExchangeCodeRepository.fineOne(code)) || {};
     if (
       !userId ||
       !(await this.userService.isUserIdExist(userId)) ||
@@ -49,10 +43,10 @@ export class AuthService {
         meta: { code, expires, userId },
       });
     }
-    delete this.tokenExchangeCodes[code];
+    await this.tokenExchangeCodeRepository.remove(code);
     const payload: TokenUserPayload = { userId };
     const refreshToken = this.jwtService.sign(payload);
-    this.userRefreshTokens[userId] = refreshToken;
+    await this.refreshTokenRepository.create(userId, { refreshToken });
     return {
       accessToken: this.jwtService.sign(payload, signTokenOptions),
       refreshToken,
@@ -73,15 +67,20 @@ export class AuthService {
         meta: { refreshToken },
       });
     }
+    const currentRefreshToken = await this.refreshTokenRepository.findOne(
+      userId,
+    );
 
-    const currentRefreshToken = this.userRefreshTokens[userId];
-
-    if (!currentRefreshToken || currentRefreshToken !== refreshToken) {
+    if (
+      !currentRefreshToken ||
+      currentRefreshToken.refreshToken !== refreshToken
+    ) {
       throw new UnauthorizedException({
         code: ErrorCode.RefreshTokenError,
         errors: [{ title: 'Refresh access token error' }],
         meta: {
-          equalToCurrentToken: currentRefreshToken === refreshToken,
+          equalToCurrentToken:
+            currentRefreshToken?.refreshToken === refreshToken,
           refreshToken,
         },
       });
@@ -89,7 +88,9 @@ export class AuthService {
 
     const payload: TokenUserPayload = { userId };
     const newRefreshToken = this.jwtService.sign(payload);
-    this.userRefreshTokens[userId] = newRefreshToken;
+    await this.refreshTokenRepository.create(userId, {
+      refreshToken: newRefreshToken,
+    });
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: newRefreshToken,

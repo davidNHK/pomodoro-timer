@@ -9,8 +9,12 @@ type UserStore = Omit<User, 'connectedProviders'>;
 export class UserRepository {
   constructor(@InjectFireStore() private db: FireStore) {}
 
+  get collection() {
+    return this.db.collection('users');
+  }
+
   async create(user: UserStore) {
-    await this.db.collection('users').doc(user.id).set(user);
+    await this.collection.doc(user.id).set(user);
   }
 
   async exist(id: string) {
@@ -18,7 +22,7 @@ export class UserRepository {
   }
 
   async findOne(id: string) {
-    const snapshot = await this.db.collection('users').doc(id).get();
+    const snapshot = await this.collection.doc(id).get();
     if (!snapshot.exists) return null;
     return snapshot.data() as UserStore;
   }

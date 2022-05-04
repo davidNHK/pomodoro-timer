@@ -10,7 +10,9 @@ import { AtlassianStrategy, AtlassianTokenService } from './atlassian.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { RefreshTokenRepository } from './refresh-token.repository';
 import { SessionStore } from './session.store';
+import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
 
 @Module({
   controllers: [AtlassianController, AuthController],
@@ -30,6 +32,8 @@ import { SessionStore } from './session.store';
     }),
   ],
   providers: [
+    TokenExchangeCodeRepository,
+    RefreshTokenRepository,
     AtlassianStrategy,
     SessionStore,
     AuthService,

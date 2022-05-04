@@ -7,13 +7,15 @@ import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
 import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
+import { RefreshTokenRepository } from './refresh-token.repository';
+import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
 
 const context = withNestModuleBuilderContext({
   imports: [
     JwtModule.register({ secret: 'secret', signOptions: { expiresIn: '1h' } }),
     UserModule,
   ],
-  providers: [AuthService],
+  providers: [RefreshTokenRepository, TokenExchangeCodeRepository, AuthService],
 });
 
 describe('AuthService', () => {

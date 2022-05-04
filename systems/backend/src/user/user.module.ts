@@ -7,7 +7,7 @@ import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 
 @Module({
-  exports: [UserService, ConnectedProviderService],
+  exports: [UserService, ConnectedProviderService, UserRepository],
   providers: [
     UserService,
     ConnectedProviderService,
