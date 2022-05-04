@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FireStore, InjectFireStore } from '../database/database.module';
+import { ConnectionProvider } from '../database/connection.provider';
 
 @Injectable()
 export class TokenExchangeCodeRepository {
-  constructor(@InjectFireStore() private db: FireStore) {}
+  constructor(private connection: ConnectionProvider) {}
 
   async fineOne(code: string): Promise<any> {
-    const snapshot = await this.db
+    const snapshot = await this.connection
       .collection('token-exchange-codes')
       .doc(code)
       .get();
@@ -16,10 +16,16 @@ export class TokenExchangeCodeRepository {
   }
 
   async create(code: string, values: { expires: number; userId: string }) {
-    return this.db.collection('token-exchange-codes').doc(code).set(values);
+    return this.connection
+      .collection('token-exchange-codes')
+      .doc(code)
+      .set(values);
   }
 
   async remove(code: string) {
-    return this.db.collection('token-exchange-codes').doc(code).delete();
+    return this.connection
+      .collection('token-exchange-codes')
+      .doc(code)
+      .delete();
   }
 }

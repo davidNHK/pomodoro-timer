@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import { JwtModule } from '@nestjs/jwt';
 import { setTimeout } from 'timers/promises';
 
+import { DatabaseModule } from '../database/database.module';
 import { UnauthorizedException } from '../error-hanlding/unauthorized.exception';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
 import { UserModule } from '../user/user.module';
@@ -12,6 +13,7 @@ import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
 
 const context = withNestModuleBuilderContext({
   imports: [
+    DatabaseModule.forFeature(),
     JwtModule.register({ secret: 'secret', signOptions: { expiresIn: '1h' } }),
     UserModule,
   ],

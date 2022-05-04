@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { FireStore, InjectFireStore } from '../database/database.module';
+import { ConnectionProvider } from '../database/connection.provider';
 import type { User } from './user.model';
 
 type UserStore = Omit<User, 'connectedProviders'>;
 
 @Injectable()
 export class UserRepository {
-  constructor(@InjectFireStore() private db: FireStore) {}
+  constructor(private connection: ConnectionProvider) {}
 
   get collection() {
-    return this.db.collection('users');
+    return this.connection.collection('users');
   }
 
   async create(user: UserStore) {

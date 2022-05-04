@@ -3,6 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { randomUUID } from 'crypto';
 import { setTimeout } from 'timers/promises';
 
+import { DatabaseModule } from '../../database/database.module';
 import { withNestModuleBuilderContext } from '../../test-helpers/nest-app-context';
 import { UserRepository } from '../user.repository';
 import { UserService } from '../user.service';
@@ -12,6 +13,7 @@ import { ConnectedProviderRepository } from './connected-provider.repository';
 import { ConnectedProviderService } from './connected-provider.service';
 
 const context = withNestModuleBuilderContext({
+  imports: [DatabaseModule.forFeature()],
   providers: [
     ConnectedCredentialRepository,
     ConnectedProviderRepository,

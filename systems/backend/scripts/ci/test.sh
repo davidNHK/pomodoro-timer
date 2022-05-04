@@ -1,8 +1,8 @@
 #!/bin/sh
 
 set -ex
-export GCLOUD_PROJECT=dummy-project-id
 
 npm run lint:ci
 npx tsc
-npm run test:ci
+
+docker compose -f docker-compose-test.yml up --exit-code-from app --abort-on-container-exit

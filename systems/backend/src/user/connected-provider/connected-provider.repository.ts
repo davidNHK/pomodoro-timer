@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  FireStore,
-  InjectFireStore,
-  WhereFilterOp,
-} from '../../database/database.module';
+import { ConnectionProvider } from '../../database/connection.provider';
+import type { WhereFilterOp } from '../../database/database.module';
 import type {
   ConnectedProvider,
   UserProvider,
@@ -20,10 +17,10 @@ type FindOneParams = {
 export class ConnectedProviderRepository {
   private logger = new Logger(ConnectedProviderRepository.name);
 
-  constructor(@InjectFireStore() private db: FireStore) {}
+  constructor(private connection: ConnectionProvider) {}
 
   async create(connectedProvider: ConnectedProvider) {
-    await this.db
+    await this.connection
       .collection('connected-providers')
       .doc(connectedProvider.id)
       .set(connectedProvider);
@@ -37,7 +34,9 @@ export class ConnectedProviderRepository {
     const query: [string, WhereFilterOp, unknown][] = [
       ['connectedToUserId', '==', connectedToUserId],
     ];
-    let connectedProvidersRef: any = this.db.collection('connected-providers');
+    let connectedProvidersRef: any = this.connection.collection(
+      'connected-providers',
+    );
     query.forEach(([field, operator, value]) => {
       if (!value) return;
       connectedProvidersRef = connectedProvidersRef.where(
@@ -56,7 +55,9 @@ export class ConnectedProviderRepository {
       ['provider', '==', provider],
       ['userId', '==', userId],
     ];
-    let connectedProvidersRef: any = this.db.collection('connected-providers');
+    let connectedProvidersRef: any = this.connection.collection(
+      'connected-providers',
+    );
     query.forEach(([field, operator, value]) => {
       if (!value) return;
       connectedProvidersRef = connectedProvidersRef.where(

@@ -1,11 +1,8 @@
-import { Inject, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import Firebase from 'firebase-admin';
 
-const FIRE_STORE = Symbol('FIRE_STORE');
-
-export function InjectFireStore() {
-  return Inject(FIRE_STORE);
-}
+import { ConnectionProvider } from './connection.provider';
+import { FIRE_STORE } from './database.constants';
 
 export type FireStore = Firebase.firestore.Firestore;
 export type WhereFilterOp = Firebase.firestore.WhereFilterOp;
@@ -26,6 +23,14 @@ export class DatabaseModule {
           useValue: Firebase.firestore(),
         },
       ],
+    };
+  }
+
+  static forFeature() {
+    return {
+      exports: [ConnectionProvider],
+      module: DatabaseModule,
+      providers: [ConnectionProvider],
     };
   }
 }

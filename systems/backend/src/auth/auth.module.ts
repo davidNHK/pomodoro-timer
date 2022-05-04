@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
+import { DatabaseModule } from '../database/database.module';
 import { UserModule } from '../user/user.module';
 import { AtlassianController } from './atlassian.controller';
 import { AtlassianStrategy, AtlassianTokenService } from './atlassian.strategy';
@@ -22,6 +23,7 @@ import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
     PassportModule,
     UserModule,
     HttpModule,
+    DatabaseModule.forFeature(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  FireStore,
-  InjectFireStore,
-  WhereFilterOp,
-} from '../../database/database.module';
+import { ConnectionProvider } from '../../database/connection.provider';
+import type { WhereFilterOp } from '../../database/database.module';
 import type { ConnectedCredential } from './connected-provider.model';
 
 type FindOneParams = {
@@ -16,7 +13,7 @@ type FindOneParams = {
 export class ConnectedCredentialRepository {
   private logger = new Logger(ConnectedCredentialRepository.name);
 
-  constructor(@InjectFireStore() private db: FireStore) {}
+  constructor(private db: ConnectionProvider) {}
 
   async create(connectedCredential: ConnectedCredential) {
     await this.db

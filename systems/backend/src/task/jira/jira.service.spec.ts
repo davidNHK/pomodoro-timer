@@ -170,10 +170,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([{ key: 'TEST-1234' }]);
     });
 
@@ -217,10 +217,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([
         { key: 'BAR-0001' },
         { key: 'BAR-0002' },
@@ -271,10 +271,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([
         { key: 'BAR-0001' },
         { key: 'BAR-0002' },

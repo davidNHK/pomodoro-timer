@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FireStore, InjectFireStore } from '../database/database.module';
 import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class RefreshTokenRepository {
-  constructor(
-    @InjectFireStore() private db: FireStore,
-    private userRepository: UserRepository,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   get collection() {
     return this.userRepository.collection;

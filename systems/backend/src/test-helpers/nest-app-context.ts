@@ -8,6 +8,7 @@ import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from '../app.module';
 import { setupApp } from '../bootstrap';
 import { NestLogger } from '../logging/nest-logger';
+import { JestModule } from './jest/jest.module';
 
 interface NestServerContext {
   app: INestApplication;
@@ -23,7 +24,11 @@ function createTestingModuleBuilder(
 ): TestingModuleBuilder {
   return Test.createTestingModule({
     controllers: moduleMetadata.controllers ?? [],
-    imports: [AppModule, ...(moduleMetadata.imports ?? [])],
+    imports: [
+      JestModule.forRoot(),
+      AppModule,
+      ...(moduleMetadata.imports ?? []),
+    ],
     providers: moduleMetadata.providers ?? [],
   });
 }

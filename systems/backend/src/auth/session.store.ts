@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
-import { FireStore, InjectFireStore } from '../database/database.module';
+import { ConnectionProvider } from '../database/connection.provider';
 
 @Injectable()
 export class SessionStore {
   // Implement https://github.com/jaredhanson/passport-oauth2/blob/master/lib/state/store.js
 
-  constructor(@InjectFireStore() private db: FireStore) {}
+  constructor(private connection: ConnectionProvider) {}
 
   memoryStore: {
     [stateId: string]: {
@@ -25,7 +25,7 @@ export class SessionStore {
   ) {
     const stateId = randomUUID();
     try {
-      await this.db.collection('sessions').doc(stateId).set({
+      await this.connection.collection('sessions').doc(stateId).set({
         meta,
         state,
       });
@@ -40,7 +40,7 @@ export class SessionStore {
     stateId: string,
     callback: (err: unknown, valid: boolean, state: any) => void,
   ) {
-    const doc = await this.db.collection('sessions').doc(stateId).get();
+    const doc = await this.connection.collection('sessions').doc(stateId).get();
     if (!doc.exists) {
       return callback(null, false, {
         message: 'Unable to verify authorization request state.',

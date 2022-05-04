@@ -3,6 +3,6 @@ EXPOSE 8080
 
 # Install Firestore Emulator.
 RUN apt-get install google-cloud-sdk-datastore-emulator google-cloud-sdk
-RUN gcloud config set project "dummy-firestore-id"
+RUN gcloud config set project "dummy-project-id"
 
 ENTRYPOINT ["gcloud", "beta", "emulators", "firestore", "start", "--host-port=0.0.0.0:8080"]
