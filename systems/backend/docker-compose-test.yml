@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run test:ci
+    depends_on:
+      - firestore
+    environment:
+      - GCLOUD_PROJECT=dummy-project-id
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+  firestore:
+    build:
+      context: .
+      dockerfile: Dockerfile.firestore
+version: '3.7'

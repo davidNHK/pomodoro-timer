@@ -1,5 +1,5 @@
 # Builder Stage
-FROM node:17.2.0-alpine3.13 AS builder
+FROM node:gallium-alpine AS builder
 
 WORKDIR /usr/src/demo
 
@@ -9,7 +9,7 @@ RUN npm ci --ignore-scripts && \
     npm run build
 
 # Run stage
-FROM node:17.2.0-alpine3.13
+FROM node:gallium-alpine
 
 WORKDIR /usr/src/demo
 

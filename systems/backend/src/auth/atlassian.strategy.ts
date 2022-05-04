@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import OAuth2Strategy from 'passport-oauth2';
-import { map, mergeMap, tap } from 'rxjs';
+import { from, map, mergeMap } from 'rxjs';
 
 import type { ConnectedProviderInput } from '../user/connected-provider/connected-provider.model';
 import { UserProvider } from '../user/connected-provider/connected-provider.model';
@@ -51,36 +51,30 @@ export class AtlassianTokenService {
     return this.connectedProviderService
       .getUserConnectedCredential$(userId, UserProvider.ATLASSIAN)
       .pipe(
-        mergeMap(credential =>
-          this.httpService.post<{
-            access_token: string;
-            refresh_token: string;
-          }>('https://auth.atlassian.com/oauth/token', {
-            client_id: clientId,
-            client_secret: clientSecret,
-            grant_type: 'refresh_token',
-            refresh_token: credential.refreshToken,
-          }),
-        ),
-      )
-      .pipe(
-        mergeMap(resp =>
-          this.me(resp.data.access_token).pipe(
-            map(user => ({
-              user,
-              ...resp.data,
-            })),
-          ),
-        ),
-        tap(({ access_token, refresh_token, user }) => {
-          this.connectedProviderService.saveUserConnectedCredential(
-            userId,
-            user.userId,
-            {
-              accessToken: access_token,
-              refreshToken: refresh_token,
-            },
-          );
+        mergeMap(credential => {
+          return this.httpService
+            .post<{
+              access_token: string;
+              refresh_token: string;
+            }>('https://auth.atlassian.com/oauth/token', {
+              client_id: clientId,
+              client_secret: clientSecret,
+              grant_type: 'refresh_token',
+              refresh_token: credential.refreshToken,
+            })
+            .pipe(
+              mergeMap(resp =>
+                from(
+                  this.connectedProviderService.updateUserConnectedCredential(
+                    credential.id,
+                    {
+                      accessToken: resp.data.access_token,
+                      refreshToken: resp.data.refresh_token,
+                    },
+                  ),
+                ).pipe(map(() => resp.data)),
+              ),
+            );
         }),
       );
   }

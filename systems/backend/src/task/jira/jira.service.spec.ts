@@ -15,6 +15,7 @@ import { withNestModuleBuilderContext } from '../../test-helpers/nest-app-contex
 import { UserProvider } from '../../user/connected-provider/connected-provider.model';
 import { ConnectedProviderService } from '../../user/connected-provider/connected-provider.service';
 import { UserModule } from '../../user/user.module';
+import { UserService } from '../../user/user.service';
 import { JiraService } from './jira.service';
 
 const context = withNestModuleBuilderContext({
@@ -24,25 +25,36 @@ const context = withNestModuleBuilderContext({
 
 describe('JiraService', () => {
   async function setupTest(module: TestingModule) {
+    const userService = module.get<UserService>(UserService);
     const connectedProviderService = module.get<ConnectedProviderService>(
       ConnectedProviderService,
     );
-    await connectedProviderService.createConnectedProvider('testId', {
-      provider: UserProvider.ATLASSIAN,
-      userAvatar: '',
-      userEmail: '',
-      userId: 'testId',
-      userName: '',
+    const user = await userService.createUser({
+      email: 'test@gmail.com',
+      name: 'test',
     });
+    const connectedProvider =
+      await connectedProviderService.createConnectedProvider(user.id, {
+        provider: UserProvider.ATLASSIAN,
+        userAvatar: '',
+        userEmail: '',
+        userId: 'testId',
+        userName: '',
+      });
 
     await connectedProviderService.saveUserConnectedCredential(
-      'testId',
-      'testId',
+      user.id,
+      connectedProvider.id,
       {
         accessToken: 'testAccessToken',
         refreshToken: 'testRefreshToken',
       },
     );
+
+    return {
+      connectedProviderId: connectedProvider.id,
+      userId: user.id,
+    };
   }
   describe('#getCloudIds$', () => {
     it('should get cloudIds', async () => {
@@ -60,10 +72,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await lastValueFrom(service.getCloudIds$('testId'));
+      const body = await lastValueFrom(service.getCloudIds$(userId));
       expect(body.data).toStrictEqual({ hello: 'world' });
     });
 
@@ -113,10 +125,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      await lastValueFrom(service.getCloudIds$('testId'));
+      await lastValueFrom(service.getCloudIds$(userId));
       expect(
         atlassianTokenAccessibleResourcesMockFunction,
       ).toHaveBeenCalledTimes(2);
@@ -158,10 +170,10 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([{ key: 'TEST-1234' }]);
     });
 
@@ -205,15 +217,15 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([
-        { key: 'FOO-0001' },
-        { key: 'FOO-0002' },
         { key: 'BAR-0001' },
         { key: 'BAR-0002' },
+        { key: 'FOO-0001' },
+        { key: 'FOO-0002' },
       ]);
     });
 
@@ -259,15 +271,15 @@ describe('JiraService', () => {
           ),
         )
         .compile();
-      await setupTest(module);
+      const { userId } = await setupTest(module);
       const service = module.get<JiraService>(JiraService);
 
-      const body = await service.getAssignedTask('testId');
+      const body = await service.getAssignedTask(userId);
       expect(body).toStrictEqual([
-        { key: 'FOO-0001' },
-        { key: 'FOO-0002' },
         { key: 'BAR-0001' },
         { key: 'BAR-0002' },
+        { key: 'FOO-0001' },
+        { key: 'FOO-0002' },
       ]);
     });
   });

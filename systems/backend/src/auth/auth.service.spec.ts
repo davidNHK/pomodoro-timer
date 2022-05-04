@@ -2,16 +2,22 @@ import { describe, expect, it } from '@jest/globals';
 import { JwtModule } from '@nestjs/jwt';
 import { setTimeout } from 'timers/promises';
 
+import { DatabaseModule } from '../database/database.module';
 import { UnauthorizedException } from '../error-hanlding/unauthorized.exception';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
+import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
+import { RefreshTokenRepository } from './refresh-token.repository';
+import { TokenExchangeCodeRepository } from './token-exchange-code.repository';
 
 const context = withNestModuleBuilderContext({
   imports: [
+    DatabaseModule.forFeature(),
     JwtModule.register({ secret: 'secret', signOptions: { expiresIn: '1h' } }),
+    UserModule,
   ],
-  providers: [AuthService, UserService],
+  providers: [RefreshTokenRepository, TokenExchangeCodeRepository, AuthService],
 });
 
 describe('AuthService', () => {
@@ -28,11 +34,11 @@ describe('AuthService', () => {
     const module = await context.moduleBuilder.compile();
     const authService = module.get<AuthService>(AuthService);
     const userService = module.get<UserService>(UserService);
-    const userId = await userService.createUser({
+    const user = await userService.createUser({
       email: 'test@gmail.com',
       name: 'test',
     });
-    const code = await authService.signTokenExchangeCode(userId);
+    const code = await authService.signTokenExchangeCode(user.id);
     const { accessToken, refreshToken } =
       await authService.exchangeTokenFromCode(code);
     expect(accessToken).toBeDefined();
@@ -52,11 +58,11 @@ describe('AuthService', () => {
     const module = await context.moduleBuilder.compile();
     const authService = module.get<AuthService>(AuthService);
     const userService = module.get<UserService>(UserService);
-    const userId = await userService.createUser({
+    const user = await userService.createUser({
       email: 'test@gmail.com',
       name: 'test',
     });
-    const code = await authService.signTokenExchangeCode(userId);
+    const code = await authService.signTokenExchangeCode(user.id);
     const { accessToken, refreshToken } =
       await authService.exchangeTokenFromCode(code);
     expect(accessToken).toBeDefined();

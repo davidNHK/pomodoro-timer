@@ -21,10 +21,6 @@ export class MockHttpService implements OnModuleInit, OnModuleDestroy {
 
     this.server = setupServer(...handlers);
     this.server.listen({ onUnhandledRequest: 'error' });
-    this.logger.debug({
-      handlers: handlers.map(handler => handler.info),
-      message: 'MockHttpService started',
-    });
   }
 
   onModuleDestroy(): any {
