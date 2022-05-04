@@ -58,8 +58,8 @@ export class Task {
   @Field(() => TaskStatus, { nullable: false })
   status!: TaskStatus;
 
-  @Field({ nullable: true })
-  startedAt?: Date;
+  @Field(() => Date, { nullable: true })
+  startedAt?: Date | null;
 
   @Field({ nullable: true })
   completedPomodoro?: number;

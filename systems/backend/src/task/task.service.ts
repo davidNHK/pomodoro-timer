@@ -3,17 +3,20 @@ import { randomUUID } from 'crypto';
 
 import { ErrorCode } from '../error-hanlding/error-code.constant';
 import { NotFoundException } from '../error-hanlding/not-found.exception';
+import { FocusedTaskRepository } from './focused-task.repository';
 import type { Task, TaskInput } from './task.model';
 import { TaskStatus } from './task.model';
+import { TaskRepository } from './task.repository';
 
 @Injectable()
 export class TaskService {
-  private tasks: { [userId: string]: Task[] } = {};
-
-  private focusedTask: { [userId: string]: Task | null } = {};
+  constructor(
+    private taskRepository: TaskRepository,
+    private focusedTaskRepository: FocusedTaskRepository,
+  ) {}
 
   async getTask({ taskId, userId }: { taskId: string; userId: string }) {
-    return this.tasks[userId]?.find(task => task.id === taskId);
+    return this.taskRepository.findOne({ taskId, userId });
   }
 
   async finishUserFocusingTask({
@@ -23,20 +26,25 @@ export class TaskService {
     taskId: string;
     userId: string;
   }) {
-    const task = this.tasks[userId].find(task => task.id === taskId);
+    const task = await this.taskRepository.findOne({ taskId, userId });
     if (!task) {
       throw new NotFoundException({
         code: ErrorCode.TaskNotFoundError,
         errors: [{ title: "Task doesn't exist" }],
       });
     }
-    task.status = TaskStatus.DONE;
-    this.focusedTask[userId] = null;
+    await this.taskRepository.update(
+      { taskId, userId },
+      { status: TaskStatus.DONE },
+    );
+    await this.focusedTaskRepository.remove(userId);
     return task;
   }
 
   async getUserFocusedTask({ userId }: { userId: string }) {
-    return this.focusedTask[userId];
+    const taskId = await this.focusedTaskRepository.findOne(userId);
+    if (!taskId) return null;
+    return await this.taskRepository.findOne({ taskId, userId });
   }
 
   async startUserFocusTask({
@@ -46,17 +54,19 @@ export class TaskService {
     taskId: string;
     userId: string;
   }) {
-    const task = this.tasks?.[userId]?.find(t => t.id === taskId);
+    const task = await this.taskRepository.findOne({ taskId, userId });
     if (!task) {
       throw new NotFoundException({
         code: ErrorCode.TaskNotFoundError,
         errors: [{ title: "Task doesn't exist" }],
       });
     }
-    task.status = TaskStatus.STARTED;
-    task.startedAt = new Date();
-    this.focusedTask[userId] = task;
-    return this.focusedTask[userId];
+    await this.taskRepository.update(
+      { taskId, userId },
+      { startedAt: new Date(), status: TaskStatus.STARTED },
+    );
+    await this.focusedTaskRepository.create(userId, taskId);
+    return task;
   }
 
   async getUserTasks(
@@ -67,20 +77,20 @@ export class TaskService {
       statuses?: TaskStatus[];
     },
   ): Promise<Task[]> {
-    return (this.tasks[userId] || []).filter(task => {
-      return statuses?.includes(task.status) ?? true;
+    return this.taskRepository.findAll(userId, {
+      statuses,
     });
   }
 
   async appendUserTaskList(userId: string, task: TaskInput): Promise<Task> {
-    this.tasks[userId] = this.tasks[userId] || [];
     const taskGotoCreate = {
       ...task,
       createdAt: new Date(),
       id: randomUUID(),
+      startedAt: null,
       status: TaskStatus.PENDING,
     };
-    this.tasks[userId].push(taskGotoCreate);
+    await this.taskRepository.create(userId, taskGotoCreate);
     return taskGotoCreate;
   }
 }
