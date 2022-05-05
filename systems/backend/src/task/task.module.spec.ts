@@ -205,13 +205,13 @@ Foo Bar
         completedPomodoro: 0,
         id: expect.any(String),
         status: 'PENDING',
-        title: 'test1',
+        title: 'test2',
       },
       {
         completedPomodoro: 0,
         id: expect.any(String),
         status: 'PENDING',
-        title: 'test2',
+        title: 'test1',
       },
     ]);
   });

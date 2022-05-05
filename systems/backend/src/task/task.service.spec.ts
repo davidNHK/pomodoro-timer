@@ -1,12 +1,18 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { DatabaseModule } from '../database/database.module';
 import { NotFoundException } from '../error-hanlding/not-found.exception';
 import { withNestModuleBuilderContext } from '../test-helpers/nest-app-context';
+import { UserModule } from '../user/user.module';
+import { UserService } from '../user/user.service';
+import { FocusedTaskRepository } from './focused-task.repository';
 import { TaskStatus } from './task.model';
+import { TaskRepository } from './task.repository';
 import { TaskService } from './task.service';
 
 const context = withNestModuleBuilderContext({
-  providers: [TaskService],
+  imports: [UserModule, DatabaseModule.forFeature()],
+  providers: [TaskRepository, FocusedTaskRepository, TaskService],
 });
 
 describe('TaskService', () => {
@@ -27,23 +33,28 @@ describe('TaskService', () => {
 
   it('should set user focus tasks', async () => {
     const module = await context.moduleBuilder.compile();
+    const userService = module.get<UserService>(UserService);
     const service = module.get<TaskService>(TaskService);
 
-    await service.appendUserTaskList('testId', {
+    const user = await userService.createUser({
+      email: 'test@gmail.com',
+      name: 'Testing',
+    });
+    await service.appendUserTaskList(user.id, {
       title: 'taskTitleA',
     });
-    await service.appendUserTaskList('testId', {
+    await service.appendUserTaskList(user.id, {
       title: 'taskTitleB',
     });
-    const [task] = await service.getUserTasks('testId', {
+    const [task] = await service.getUserTasks(user.id, {
       statuses: [TaskStatus.PENDING],
     });
 
     await service.startUserFocusTask({
       taskId: task.id,
-      userId: 'testId',
+      userId: user.id,
     });
-    const focusedTask = await service.getUserFocusedTask({ userId: 'testId' });
+    const focusedTask = await service.getUserFocusedTask({ userId: user.id });
     expect(focusedTask?.id).toEqual(task.id);
   });
 

@@ -6,16 +6,14 @@ import { NotFoundException } from '../../error-hanlding/not-found.exception';
 import type { Pomodoro } from '../task.model';
 import { TaskStatus } from '../task.model';
 import { TaskService } from '../task.service';
+import { PomodoroRecordRepository } from './pomodoro-record.repository';
 
 @Injectable()
 export class PomodoroRecordService {
-  pomodoroRecords: {
-    [userId: string]: {
-      [taskId: string]: Pomodoro[];
-    };
-  } = {};
-
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private pomodoroRecordRepository: PomodoroRecordRepository,
+  ) {}
 
   async getNumberOfPomodoroOnTask({
     taskId,
@@ -24,7 +22,7 @@ export class PomodoroRecordService {
     taskId: string;
     userId: string;
   }): Promise<number> {
-    return this.pomodoroRecords?.[userId]?.[taskId]?.length ?? 0;
+    return this.pomodoroRecordRepository.count({ taskId, userId });
   }
 
   async recordTaskPomodoro({
@@ -41,9 +39,6 @@ export class PomodoroRecordService {
         errors: [{ title: 'Task not found!' }],
       });
     }
-    this.pomodoroRecords[userId] = this.pomodoroRecords[userId] || {};
-    this.pomodoroRecords[userId][taskId] =
-      this.pomodoroRecords[userId][taskId] || [];
     const pomodoro: Pomodoro = {
       completeAt: new Date(),
       id: randomUUID(),
@@ -51,7 +46,7 @@ export class PomodoroRecordService {
       taskId,
       userId,
     };
-    this.pomodoroRecords[userId][taskId].push(pomodoro);
+    await this.pomodoroRecordRepository.create({ taskId, userId }, pomodoro);
     return pomodoro;
   }
 }
