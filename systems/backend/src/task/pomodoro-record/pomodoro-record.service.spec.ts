@@ -7,6 +7,7 @@ import { UserService } from '../../user/user.service';
 import { FocusedTaskRepository } from '../focused-task.repository';
 import { TaskRepository } from '../task.repository';
 import { TaskService } from '../task.service';
+import { PomodoroRecordRepository } from './pomodoro-record.repository';
 import { PomodoroRecordService } from './pomodoro-record.service';
 
 const context = withNestModuleBuilderContext({
@@ -14,6 +15,7 @@ const context = withNestModuleBuilderContext({
   providers: [
     TaskRepository,
     FocusedTaskRepository,
+    PomodoroRecordRepository,
     TaskService,
     PomodoroRecordService,
   ],

@@ -13,7 +13,7 @@ type FindOneFilter = {
 export class TaskRepository {
   constructor(private userRepository: UserRepository) {}
 
-  private userTaskCollection(userId: string) {
+  userTaskCollection(userId: string) {
     return this.userRepository.collection.doc(userId).collection('tasks');
   }
 

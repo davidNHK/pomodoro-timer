@@ -6,6 +6,7 @@ import { FIRE_STORE } from './database.constants';
 
 export type FireStore = Firebase.firestore.Firestore;
 export type WhereFilterOp = Firebase.firestore.WhereFilterOp;
+export type FieldValue = Firebase.firestore.FieldValue;
 
 @Module({})
 export class DatabaseModule {
