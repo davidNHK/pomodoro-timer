@@ -1,5 +1,5 @@
 encryptionsalt: v1:aiuHH/IZbgI=:v1:YyXe5yfBNJRNiy64:QoollibRBeLCfgrYHD/3GLBWzuu1Fw==
 config:
-  aws:region: eu-west-2
-  prefix:name: code-test
-  rds:user: dbuser
+  gcp:region: europe-west2
+  gcp:zone: europe-west2-a
+  prefix:name: pomodoro-timer
