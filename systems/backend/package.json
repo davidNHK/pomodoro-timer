@@ -18,7 +18,7 @@
     "convict": "6.2.2",
     "dotenv": "16.0.0",
     "firebase-admin": "10.2.0",
-    "graphql": "16.4.0",
+    "graphql": "16.5.0",
     "helmet": "5.0.2",
     "luxon": "2.3.2",
     "passport": "0.5.2",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@busybox/eslint-config": "5.10.0",
     "@busybox/tsconfig": "1.7.1",
-    "@jest/globals": "28.0.3",
+    "@jest/globals": "28.1.0",
     "@nestjs/cli": "8.2.5",
     "@nestjs/schematics": "8.0.11",
     "@nestjs/testing": "8.4.4",
