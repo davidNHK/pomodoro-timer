@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import Firebase from 'firebase-admin';
 
 import { ConnectionProvider } from './connection.provider';
@@ -6,7 +7,6 @@ import { FIRE_STORE } from './database.constants';
 
 export type FireStore = Firebase.firestore.Firestore;
 export type WhereFilterOp = Firebase.firestore.WhereFilterOp;
-export type FieldValue = Firebase.firestore.FieldValue;
 
 @Module({})
 export class DatabaseModule {
@@ -17,6 +17,7 @@ export class DatabaseModule {
     return {
       exports: [FIRE_STORE],
       global: true,
+      imports: [ConfigModule],
       module: DatabaseModule,
       providers: [
         {
@@ -30,6 +31,7 @@ export class DatabaseModule {
   static forFeature() {
     return {
       exports: [ConnectionProvider],
+      imports: [ConfigModule],
       module: DatabaseModule,
       providers: [ConnectionProvider],
     };

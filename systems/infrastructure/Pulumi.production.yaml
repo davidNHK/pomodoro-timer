@@ -1,6 +1,5 @@
 config:
   gcp:project: productivity-349522
   gcp:region: europe-west2
-  gcp:zone: europe-west2-a
   project:name: pomodoro-timer
   pulumi:template: gcp-typescript
