@@ -22,6 +22,6 @@ name: Deploy systems/infrastructure
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - systems/infrastructure/**
