@@ -1,10 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -ex
+set -e
 
-npm run lint:ci
-npx tsc
-npm run test
 npm run build
 ~/.pulumi/bin/pulumi stack select davidNHK/pomodoro-timer/production
-~/.pulumi/bin/pulumi preview
+~/.pulumi/bin/pulumi up --yes

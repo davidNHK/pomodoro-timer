@@ -1,47 +1,30 @@
 # Infrastructure as code
 
-Include Setup AWS with
-* RDS
-* CloudFront
-* S3
-* Lambda
-* API Gateway
-* ECR
+Include Setup GCP with
+* Cloud Run
+* Artifact registry
 
 ## Setup
 
 [Install pulumi CLI](https://www.pulumi.com/docs/get-started/install/)
 ```bash
-bash ./scripts/ci/setup.sh
+npm install
 bash ./scripts/ci/dev-deploy.sh
 ```
 
 ## Verify deployment
 
-After execute `deploy.sh`, you will see the following output in console:
+After execute `dev-deploy.sh`, you will see the following output in console:
 
 ```text
-API_HOST             https://l1kqpd5nqc.execute-api.eu-west-2.amazonaws.com
-CLOUDFRONT_URL       https://d16m8sgb6n5atc.cloudfront.net
-DATABASE_HOST        tf-20220326123106742800000006.cluster-cxksjykhpxmn.eu-west-2.rds.amazonaws.com
-DATABASE_PASSWORD    [secret]
-ECR_IMAGE_NAME       code-test-image-092187c
-ECR_REPO             139227058951.dkr.ecr.eu-west-2.amazonaws.com
-LAMBDA_FUNCTION_ARN  arn:aws:lambda:eu-west-2:139227058951:function:code-test-lambda-9efb696
-S3_BUCKET            code-test-bucket-7afec63
+ARTIFACT_REGISTRY_URL   europe-west2-docker.pkg.dev/productivity-349522/development-pomodoro-timer-docker-registry
+CLOUD_RUN_BACKEND_URL   https://development-pomodoro-timer-cloud-run-backend-serv-ku5iojzg2q-nw.a.run.app
+CLOUD_RUN_FRONTEND_RUL  https://development-pomodoro-timer-cloud-run-frontend-ser-ku5iojzg2q-nw.a.run.app
 ```
 
 In case you missed, execute `pulumi stack output` to see it again.
 
 then you can verify the deployment by running the following steps:
 
-- Open `frontend/index.html` in a browser
-- Open `frontend/upload/demo.gif` in a browser
+- Open `CLOUD_RUN_FRONTEND_RUL` in a browser
 
-## Manual steps after deployment
-
-You need update environment setting in below files:
-
-[Frontend deploy workflow](/.github/workflows/deploy-frontend.yml)
-
-[Backend deploy workflow](/.github/workflows/deploy-backend.yml)
