@@ -25,3 +25,4 @@ on:
       - main
     paths:
       - systems/infrastructure/**
+  workflow_dispatch:
