@@ -25,6 +25,6 @@ name: Deploy systems/backend
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - systems/backend/**

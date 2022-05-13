@@ -21,6 +21,6 @@ name: Deploy systems/frontend
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - systems/frontend/**

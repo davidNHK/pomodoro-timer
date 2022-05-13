@@ -23,6 +23,6 @@ on:
   push:
     branches:
       - development
-      - master
+      - main
     paths:
       - 'systems/infrastructure/**'
