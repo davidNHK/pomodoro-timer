@@ -1,5 +1,6 @@
-encryptionsalt: v1:aiuHH/IZbgI=:v1:YyXe5yfBNJRNiy64:QoollibRBeLCfgrYHD/3GLBWzuu1Fw==
 config:
+  gcp:project: productivity-349522
   gcp:region: europe-west2
   gcp:zone: europe-west2-a
-  prefix:name: pomodoro-timer
+  project:name: pomodoro-timer
+  pulumi:template: gcp-typescript

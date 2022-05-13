@@ -1,0 +1,14 @@
+services:
+  sample-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+  sample-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - '8081:80'
+version: '3.7'

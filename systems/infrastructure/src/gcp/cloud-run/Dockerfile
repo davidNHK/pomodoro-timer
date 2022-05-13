@@ -1,11 +1,13 @@
-FROM public.ecr.aws/lambda/nodejs:14
+FROM node:lts-alpine
 
-ARG FUNCTION_DIR="/var/task"
+ARG WORKING_DIR="/system"
 
-RUN mkdir -p ${FUNCTION_DIR}
+RUN mkdir -p ${WORKING_DIR}
 
-COPY sample-api.js package.json package-lock.json ${FUNCTION_DIR}
+WORKDIR ${WORKING_DIR}
 
-WORKDIR ${FUNCTION_DIR}
+COPY sample-api.mjs ${WORKING_DIR}
 
-RUN npm install --ci
+EXPOSE 5000
+
+CMD ["node", "sample-api.mjs"]

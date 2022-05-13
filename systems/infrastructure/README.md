@@ -13,7 +13,7 @@ Include Setup AWS with
 [Install pulumi CLI](https://www.pulumi.com/docs/get-started/install/)
 ```bash
 bash ./scripts/ci/setup.sh
-bash ./scripts/ci/deploy.sh
+bash ./scripts/ci/dev-deploy.sh
 ```
 
 ## Verify deployment
