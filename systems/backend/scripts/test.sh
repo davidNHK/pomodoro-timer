@@ -1,8 +1,11 @@
-#!/bin/sh
+#! /usr/bin/env bash
 
-set -e
+set -ex
+
 
 # https://github.com/firebase/firebase-admin-node/issues/1703
 export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/scripts/dummy-gcp-credentials.json"
-export APP_ENV=development
-npm run start:dev
+export GCLOUD_PROJECT=dummy-project-id
+export FIRESTORE_EMULATOR_HOST=0.0.0.0:8080
+export APP_ENV=test
+npm run test
