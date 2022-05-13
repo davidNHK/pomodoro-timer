@@ -1,38 +1,20 @@
-import * as pulumi from '@pulumi/pulumi';
+import { createArtifactRegistry } from './gcp/artifact-registry/artifact-registry.js';
+import { getRegistryUrl } from './gcp/artifact-registry/get-registry-url.js';
+import {
+  createBackendCloudRun,
+  createFrontendCloudRun,
+} from './gcp/cloud-run/cloud-run.js';
+import { getCloudRunUrl } from './gcp/cloud-run/get-cloud-run-url.js';
 
-import { createAPIGateWay } from './aws/api-gateway.js';
-import { createCloudFront } from './aws/cloudfront.js';
-import { createECRImage } from './aws/ecr/index.js';
-import { createLambda } from './aws/lambda.js';
-import { createRDS } from './aws/rds.js';
-import { createS3Bucket, uploadTestIndexFile } from './aws/s3/index.js';
-import { createVPC } from './aws/vpc.js';
-
-const { vpc } = createVPC();
-const { bucket } = createS3Bucket();
-const { cloudFrontDistribution } = createCloudFront(bucket);
-const { database, password } = await createRDS(vpc);
-const { image } = createECRImage();
-const { lambdaFunction, lambdaLatestVersionAlias } = await createLambda(image, {
-  cloudFrontDistribution,
-  rds: database,
-  s3Bucket: bucket,
-  vpc,
+const registry = createArtifactRegistry();
+const cloudRunBackendService = await createBackendCloudRun({
+  repository: registry,
 });
-const { apigw } = createAPIGateWay(lambdaFunction, cloudFrontDistribution);
-await uploadTestIndexFile(bucket, apigw);
-export const ECR_REPO = image.repository.repository.repositoryUrl.apply(
-  url => url.split('/')[0],
-);
-export const ECR_IMAGE_NAME = image.repository.repository.name;
-export const DATABASE_NAME = database.databaseName;
-export const DATABASE_HOST = database.endpoint;
-export const DATABASE_USER = database.masterUsername;
-export const DATABASE_PASSWORD = password;
+const cloudRunFrontendService = await createFrontendCloudRun({
+  backendApi: cloudRunBackendService,
+  repository: registry,
+});
 
-export const CLOUDFRONT_URL = pulumi.interpolate`https://${cloudFrontDistribution.domainName}`;
-export const API_HOST = apigw.apiEndpoint;
-export const LAMBDA_FUNCTION_ARN = lambdaFunction.arn;
-export const S3_BUCKET = bucket.bucket;
-export const LAMBDA_FUNCTION_LATEST_VERSION_ALIAS_ARN =
-  lambdaLatestVersionAlias.name;
+export const ARTIFACT_REGISTRY_URL = getRegistryUrl(registry);
+export const CLOUD_RUN_BACKEND_URL = getCloudRunUrl(cloudRunBackendService);
+export const CLOUD_RUN_FRONTEND_RUL = getCloudRunUrl(cloudRunFrontendService);
