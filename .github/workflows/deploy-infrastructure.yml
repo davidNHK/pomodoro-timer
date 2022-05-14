@@ -11,6 +11,13 @@ jobs:
           cache: npm
           cache-dependency-path: '**/package-lock.json'
           node-version-file: .nvmrc
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
       - run: bash ./scripts/setup.sh
       - run:
           npx lerna exec --stream --concurrency 1 --scope=infrastructure -- bash
