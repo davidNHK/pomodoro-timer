@@ -3,44 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.3.0](https://github.com/davidNHK/sony-code-test/compare/v1.1.0...v1.3.0) (2022-04-02)
+# 1.4.0 (2022-05-14)
+
+
+### Bug Fixes
+
+* docker domain name ([f2f5e5a](https://github.com/davidNHK/pomodoro-timer/commit/f2f5e5a1ee1884fb25c11284012be400a77cc3ee))
 
 
 ### Features
 
-* enable auto update github action workflow file ([c38fd3e](https://github.com/davidNHK/sony-code-test/commit/c38fd3e2f2447eabdc025b1511dcc139ee4d3e61))
-
-
-
-
-
-# [1.2.0](https://github.com/davidNHK/sony-code-test/compare/v1.1.0...v1.2.0) (2022-03-28)
-
-**Note:** Version bump only for package infrastructure
-
-
-
-
-
-# [1.1.0](https://github.com/davidNHK/sony-code-test/compare/v1.0.4...v1.1.0) (2022-03-27)
-
-
-### Features
-
-* enable lambda provisioned concurrency ([7340014](https://github.com/davidNHK/sony-code-test/commit/73400149f3cc29080c79a970c34cc5e86855c770))
-
-
-
-
-
-## [1.0.4](https://github.com/davidNHK/sony-code-test/compare/v1.0.2...v1.0.4) (2022-03-26)
-
-**Note:** Version bump only for package infrastructure
-
-
-
-
-
-## [1.0.3](https://github.com/davidNHK/sony-code-test/compare/v1.0.2...v1.0.3) (2022-03-26)
-
-**Note:** Version bump only for package infrastructure
+* init gcp setup ([8ca3756](https://github.com/davidNHK/pomodoro-timer/commit/8ca3756358af55ae855d4f90419c4209f30c23cf))
+* **wip:** pulumi gcp ([99f3e40](https://github.com/davidNHK/pomodoro-timer/commit/99f3e40d18f946dcd4dde4640ed595501b34b483))
+* adjust project template config ([2418e7d](https://github.com/davidNHK/pomodoro-timer/commit/2418e7d30e5aa833e1c9b0ecc92739d8680a3114))
