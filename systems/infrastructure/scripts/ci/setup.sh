@@ -3,5 +3,6 @@
 set -ex
 
 curl -fsSL https://get.pulumi.com | sh
-~/.pulumi/bin/pulumi login
+echo "$HOME/.pulumi/bin" >> "$GITHUB_PATH"
+"$HOME/.pulumi/bin/pulumi" login
 npm install
