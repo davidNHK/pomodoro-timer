@@ -13,6 +13,13 @@ convict.addFormat({
 });
 
 const configSchema = convict({
+  backend: {
+    origin: {
+      default: null,
+      env: 'BACKEND_ORIGIN',
+      format: String,
+    },
+  },
   connector: {
     atlassian: {
       clientId: {

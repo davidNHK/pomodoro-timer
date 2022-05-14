@@ -18,3 +18,5 @@ const cloudRunFrontendService = await createFrontendCloudRun({
 export const ARTIFACT_REGISTRY_URL = getRegistryUrl(registry);
 export const CLOUD_RUN_BACKEND_URL = getCloudRunUrl(cloudRunBackendService);
 export const CLOUD_RUN_FRONTEND_RUL = getCloudRunUrl(cloudRunFrontendService);
+export const CLOUD_RUN_BACKEND_NAME = cloudRunBackendService.name;
+export const CLOUD_RUN_FRONTEND_NAME = cloudRunFrontendService.name;
