@@ -20,7 +20,7 @@ gcloud run deploy "$CLOUD_RUN_NAME" \
   --image="$IMAGE_NAME" \
   --region="$GCP_REGION" \
   --command="npm" \
-  --args='start:prod' \
+  --args='run,start:prod' \
   --update-env-vars='APP_PORT=5000' \
   --update-env-vars='APP_ENV=production' \
   --update-env-vars="FRONTEND_ORIGIN=$CLOUD_RUN_FRONTEND_RUL" \
