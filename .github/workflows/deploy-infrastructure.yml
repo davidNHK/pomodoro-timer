@@ -17,7 +17,7 @@ jobs:
         with:
           credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
       - run: bash ./scripts/setup.sh
       - run:
           npx lerna exec --stream --concurrency 1 --scope=infrastructure -- bash
