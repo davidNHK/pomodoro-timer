@@ -1,6 +1,7 @@
 import { Image } from '@pulumi/docker';
 import { artifactregistry, cloudrun, organizations } from '@pulumi/gcp';
 import * as pulumi from '@pulumi/pulumi';
+import { RandomPassword } from '@pulumi/random';
 import { promises as fs } from 'fs';
 import Handlebars from 'handlebars';
 import path from 'path';
@@ -103,6 +104,19 @@ export async function createBackendCloudRun({
         spec: {
           containers: [
             {
+              envs: [
+                {
+                  // https://cloud.google.com/run/docs/configuring/environment-variables
+                  // KISS, placed JWT_SECRET on env.
+                  name: 'JWT_SECRET',
+                  value: new RandomPassword(
+                    getResourceNamePrefix('cloud-run-backend-jwt-secret'),
+                    {
+                      length: 24,
+                    },
+                  ).result,
+                },
+              ],
               image: image.imageName,
               ports: [
                 {

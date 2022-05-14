@@ -2,4 +2,3 @@ node_modules/
 bin/
 coverage/
 package-lock.json
-./src/aws/ecr/package.json
