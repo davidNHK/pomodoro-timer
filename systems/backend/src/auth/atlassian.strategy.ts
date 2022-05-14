@@ -94,9 +94,10 @@ export class AtlassianStrategy extends PassportStrategy(
       configService.get('connector.atlassian.clientId'),
       configService.get('connector.atlassian.clientSecret'),
     ];
+    const backendOrigin = configService.get('backend.origin');
     super({
       authorizationURL: 'https://auth.atlassian.com/authorize',
-      callbackURL: 'http://localhost:5333/auth/atlassian/callback',
+      callbackURL: `${backendOrigin}/auth/atlassian/callback`,
       clientID: clientId,
       clientSecret: clientSecret,
       scope: ['read:me', 'read:jira-work', 'read:jira-user', 'offline_access'],

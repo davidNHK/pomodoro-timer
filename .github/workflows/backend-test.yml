@@ -1,3 +1,5 @@
+env:
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,17 +11,17 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
           node-version-file: .nvmrc
       - run: bash ./scripts/setup.sh
-      - run: npx lerna exec --stream --concurrency 1 --scope='{backend,frontend}' -- bash scripts/ci/setup.sh
-      - run: npx lerna exec --stream --concurrency 1 --scope=frontend -- bash scripts/ci/test.sh
-name: Test systems/frontend
+      - run: npx lerna exec --stream --concurrency 1 --scope=backend -- bash scripts/ci/setup.sh
+      - run: npx lerna exec --stream --concurrency 1 --scope=backend -- bash scripts/ci/test.sh
+name: Test systems/backend
 
 on:
   pull_request:
     paths:
-      - 'systems/frontend/**'
+      - 'systems/backend/**'
   push:
     branches:
       - development
       - main
     paths:
-      - 'systems/frontend/**'
+      - 'systems/backend/**'

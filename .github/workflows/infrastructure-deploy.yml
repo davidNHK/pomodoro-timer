@@ -6,7 +6,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3.1.1
+        with:
+          fetch-depth: 2
+      - id: changed-files-specific
+        name: Get specific changed files
+        uses: tj-actions/changed-files@v19.1
+        with:
+          files: |
+            systems/infrastructure/**
+      - if: steps.changed-files-specific.outputs.any_changed == 'true'
+        uses: actions/setup-node@v3.1.1
         with:
           cache: npm
           cache-dependency-path: '**/package-lock.json'
@@ -30,6 +39,4 @@ on:
   push:
     branches:
       - main
-    paths:
-      - systems/infrastructure/**
   workflow_dispatch:
