@@ -2,7 +2,9 @@ env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 jobs:
-  deploy:
+  check-file-changed:
+    outputs:
+      any_changed: ${{ steps.changed-files-specific.outputs.any_changed }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -14,8 +16,14 @@ jobs:
         with:
           files: |
             systems/infrastructure/**
-      - if: steps.changed-files-specific.outputs.any_changed == 'true'
-        uses: actions/setup-node@v3.1.1
+  infrastructure-deploy:
+    if: needs.check-file-changed.outputs.any_changed == 'true'
+    needs:
+      - check-file-changed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.1.1
         with:
           cache: npm
           cache-dependency-path: '**/package-lock.json'
