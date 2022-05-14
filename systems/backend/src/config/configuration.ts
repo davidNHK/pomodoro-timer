@@ -55,7 +55,7 @@ const configSchema = convict({
   },
   port: {
     default: 5333,
-    env: 'PORT',
+    env: 'APP_PORT',
     format: 'port',
   },
 });
