@@ -7,14 +7,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for infrastructure deployment to succeed
+      - name: Wait for infrastructure deployment
         uses: lewagon/wait-on-check-action@v1.0.0
         with:
           allowed-conclusions: success,skipped
+          check-name: infrastructure-deploy
           ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          running-workflow-name: Deploy systems/infrastructure
-          wait-interval: 10
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3.1.1
         with:
@@ -33,3 +32,4 @@ on:
       - main
     paths:
       - systems/backend/**
+  workflow_dispatch:

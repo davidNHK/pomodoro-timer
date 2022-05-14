@@ -24,3 +24,4 @@ on:
       - main
     paths:
       - systems/frontend/**
+  workflow_dispatch:

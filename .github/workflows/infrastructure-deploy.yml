@@ -2,7 +2,7 @@ env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 jobs:
-  deploy:
+  infrastructure-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
