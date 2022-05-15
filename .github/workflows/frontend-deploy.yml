@@ -1,19 +1,31 @@
 env:
-  API_HOST: https://qu3k5lklb8.execute-api.eu-west-2.amazonaws.com
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_DEFAULT_REGION: eu-west-2
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  S3_BUCKET: code-test-dev-bucket-1cdcee7
+  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - if: ${{ github.event_name != 'workflow_dispatch' }}
+        name: Wait for infrastructure deployment
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          allowed-conclusions: success,skipped
+          check-name: infrastructure-deploy
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3.1.1
         with:
           cache: npm
           cache-dependency-path: '**/package-lock.json'
           node-version-file: .nvmrc
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
       - run: bash ./scripts/setup.sh
       - run: npx lerna exec --stream --concurrency 1 --scope=frontend -- bash
           scripts/ci/deploy.sh
