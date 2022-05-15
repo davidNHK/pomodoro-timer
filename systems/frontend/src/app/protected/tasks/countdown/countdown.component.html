@@ -3,7 +3,7 @@
     <article class="flex flex-col w-full text-center">
       <h1>{{ type | uppercase }}</h1>
       <p class="text-9xl">{{ runDown | formatMs }}</p>
-      <video #videoElement playsinline width="0" (pause)="stop()">
+      <video #videoElement playsinline muted width="0" (pause)="stop()">
         <source [src]="countdownVideoUrl" type="video/mp4" />
       </video>
     </article>
@@ -14,6 +14,7 @@
         mat-raised-button
         color="primary"
         class="w-full"
+        data-testid="start-count-down-button"
         [disabled]="!canStartTimer"
         (click)="start()"
       >
