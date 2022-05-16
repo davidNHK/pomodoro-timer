@@ -12,7 +12,7 @@ jobs:
           fetch-depth: 2
       - id: changed-files-specific
         name: Get specific changed files
-        uses: tj-actions/changed-files@v19.1
+        uses: tj-actions/changed-files@v20
         with:
           files: |
             systems/infrastructure/**
