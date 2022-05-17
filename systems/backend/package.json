@@ -9,7 +9,7 @@
     "@nestjs/graphql": "10.0.11",
     "@nestjs/jwt": "8.0.0",
     "@nestjs/passport": "8.2.1",
-    "@nestjs/platform-express": "8.4.4",
+    "@nestjs/platform-express": "8.4.5",
     "@nestjs/terminus": "8.0.6",
     "apollo-server-errors": "3.3.1",
     "apollo-server-express": "3.7.0",
