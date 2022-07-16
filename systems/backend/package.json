@@ -30,14 +30,14 @@
     "rxjs": "7.5.5",
     "serialize-error": "8.1.0",
     "uuid": "8.3.2",
-    "winston": "3.7.2"
+    "winston": "3.8.1"
   },
   "description": "",
   "devDependencies": {
     "@busybox/eslint-config": "5.10.0",
     "@busybox/tsconfig": "1.7.1",
     "@jest/globals": "28.1.0",
-    "@nestjs/cli": "8.2.5",
+    "@nestjs/cli": "9.0.0",
     "@nestjs/schematics": "9.0.1",
     "@nestjs/testing": "8.4.5",
     "@types/convict": "6.1.1",
@@ -54,12 +54,12 @@
     "eslint-import-resolver-typescript": "2.7.1",
     "graphql-tag": "2.12.6",
     "jest": "27.5.1",
-    "jest-environment-node": "28.1.0",
+    "jest-environment-node": "28.1.3",
     "msw": "0.36.8",
     "supertest": "6.2.3",
     "ts-jest": "27.1.4",
-    "ts-loader": "9.3.0",
-    "ts-node": "10.7.0",
+    "ts-loader": "9.3.1",
+    "ts-node": "10.9.1",
     "tsconfig-paths": "4.0.0",
     "typescript": "4.6.3"
   },
