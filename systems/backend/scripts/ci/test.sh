@@ -1,8 +1,13 @@
-#!/bin/sh
+#! /usr/bin/env bash
 
 set -ex
 
-npm run lint:ci
-npx tsc
 
-docker compose -f docker-compose-test.yml up --build --exit-code-from app --abort-on-container-exit
+# https://github.com/firebase/firebase-admin-node/issues/1703
+export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/scripts/dummy-gcp-credentials.json"
+export GCLOUD_PROJECT=dummy-project-id
+export FIRESTORE_EMULATOR_HOST=0.0.0.0:8080
+export APP_ENV=test
+docker-compose up -d
+npm run test:ci
+docker-compose kill
