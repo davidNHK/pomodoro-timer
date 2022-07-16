@@ -78,7 +78,7 @@ export class CountdownComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.countdownMs = this.getCountdownMs();
     this.runDown = this.countdownMs;
   }
@@ -128,8 +128,15 @@ export class CountdownComponent implements OnInit {
       });
     const videoElement = this.videoElement.nativeElement;
     videoElement.currentTime = 0;
-    await videoElement.play();
-    await videoElement.requestPictureInPicture();
+    await videoElement
+      .play()
+      .then(() => {
+        return videoElement.requestPictureInPicture();
+      })
+      .catch(err => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      });
   }
 
   async stop(): Promise<void> {
