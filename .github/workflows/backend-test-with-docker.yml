@@ -1,0 +1,29 @@
+env:
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.3.0
+        with:
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+          node-version-file: .nvmrc
+      - run: bash ./scripts/setup.sh
+      - run: npx lerna exec --stream --concurrency 1 --scope=backend -- bash scripts/ci/setup.sh
+      - run: npx lerna exec --stream --concurrency 1 --scope=backend -- bash scripts/ci/test-with-docker.sh
+name: Test systems/backend with Docker
+
+on:
+  pull_request:
+    paths:
+      - 'systems/backend/[Dd]ocker*'
+      - systems/backend/scripts/ci/test-with-docker.sh
+  push:
+    branches:
+      - development
+      - main
+    paths:
+      - 'systems/backend/[Dd]ocker*'
+      - systems/backend/scripts/ci/test-with-docker.sh
