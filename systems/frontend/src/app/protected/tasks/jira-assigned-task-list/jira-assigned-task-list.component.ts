@@ -25,7 +25,7 @@ export class JiraAssignedTaskListComponent implements OnInit {
       .fetch({}, { fetchPolicy: 'network-only' })
       .subscribe(({ data, errors, loading }) => {
         this.loading = loading;
-        if (!loading && !errors) {
+        if (!loading && !errors && data) {
           this.jiraAssignedTasks = data.jiraAssignedTask;
         }
       });
