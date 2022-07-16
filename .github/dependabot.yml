@@ -9,7 +9,7 @@ updates:
     package-ecosystem: github-actions
     schedule:
       interval: daily
-  - directory: /
+  - directory: /systems/backend
     package-ecosystem: docker
     schedule:
       interval: daily
