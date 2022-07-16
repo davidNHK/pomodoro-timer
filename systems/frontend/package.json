@@ -28,7 +28,7 @@
     "@angular/cli": "14.0.6",
     "@angular/compiler-cli": "14.0.6",
     "@busybox/eslint-config": "5.10.0",
-    "@busybox/prettier-config": "1.2.1",
+    "@busybox/prettier-config": "1.2.4",
     "@busybox/tsconfig": "1.7.2",
     "@types/jasmine": "4.0.3",
     "@types/node": "18.0.5",
