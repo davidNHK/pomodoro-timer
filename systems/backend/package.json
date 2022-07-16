@@ -20,7 +20,7 @@
     "firebase-admin": "11.0.0",
     "graphql": "16.5.0",
     "helmet": "5.0.2",
-    "luxon": "2.4.0",
+    "luxon": "3.0.1",
     "passport": "0.5.3",
     "passport-jwt": "4.0.0",
     "passport-oauth2": "1.6.1",
