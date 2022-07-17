@@ -10,7 +10,7 @@
     "@angular/platform-browser": "14.0.6",
     "@angular/platform-browser-dynamic": "14.0.6",
     "@angular/router": "14.0.6",
-    "@apollo/client": "3.0.0",
+    "@apollo/client": "3.6.9",
     "apollo-angular": "3.0.1",
     "graphql": "16.5.0",
     "rxjs": "7.5.5",
