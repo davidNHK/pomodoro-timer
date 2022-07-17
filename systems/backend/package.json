@@ -50,7 +50,7 @@
     "@types/ramda": "0.28.15",
     "@types/supertest": "2.0.12",
     "@types/uuid": "8.3.4",
-    "eslint": "8.19.0",
+    "eslint": "8.20.0",
     "eslint-import-resolver-typescript": "3.2.6",
     "graphql-tag": "2.12.6",
     "jest": "27.5.1",
