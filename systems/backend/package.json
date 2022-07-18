@@ -51,7 +51,7 @@
     "@types/supertest": "2.0.12",
     "@types/uuid": "8.3.4",
     "eslint": "8.20.0",
-    "eslint-import-resolver-typescript": "3.2.6",
+    "eslint-import-resolver-typescript": "3.2.7",
     "graphql-tag": "2.12.6",
     "jest": "27.5.1",
     "jest-environment-node": "28.1.3",
